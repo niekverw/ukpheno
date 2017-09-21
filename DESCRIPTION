@@ -1,0 +1,18 @@
+Package: CreateUKBiobankPhentoypes
+Type: Package
+Title: CreateUKBiobankPhentoypes
+Version: 0.22
+Date: 2017-07-08
+Authors@R: person("Niek", "Verweij", email = "mail@niekverweij.com", role = c("aut", "cre"))
+Description: Provides framework for creating dichotomous phenotypes in UK Biobank
+License: <this package is not yet ready to be distributed, please contact mail@niekverweij.com>
+Imports:
+	parallel,
+	data.table,
+	dplyr,
+	matrixStats,
+	readstata13,
+	gdata
+LazyData: TRUE
+RoxygenNote: 6.0.1
+Suggests: testthat
