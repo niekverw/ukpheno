@@ -2,7 +2,7 @@
 #### -----#### -----#### -----#### -----#### -----#### -----#### -----#### -----#### -----
 #' CreateUKBiobankPhentoypes - Function
 #'
-#' CreateUKBiobankPhentoypes creates dichotomous phenotypes for UK Biobank using definitions that are based on the available variables (e.g. HES-data, mortality, toucschreen,  SR data). It is very in-efficient and uses STATA files in R which is not ideal...  The current output includes variables on history, study visit, future, time-to-first-event; WORK IN PROGRESS
+#' CreateUKBiobankPhentoypes creates dichotomous phenotypes for UK Biobank using definitions that are based on the available variables (e.g. HES-data, mortality, toucschreen,  SR data). The current output includes variables on history, study visit, future, time-to-first-event; WORK IN PROGRESS
 #' @name CreateUKBiobankPhentoypes
 #' @param Nvisits #Number of follow-up visits in your dataset (a.t.m 3, baseline,1 and 2) .
 #' @param visitreference #Number visit that should be used as reference; should be 0 (baseline),1 or 2
@@ -12,7 +12,7 @@
 #' @param Outputdir Output directory
 #' @param VctOutputIndividualColumns set VctOutputIndividualColumns=c("TS","SR","TS_RX","RX","LAB") to output all individual columns, default is 'VctOutputIndividualColumns=c()'
 #' @keywords CreateUKBiobankPhentoypes
-#' @references <Please contact mail@niekverweij.com, this is not yet ready to be distributed.>
+#' @references <Please contact mail@niekverweij.com, this package is not yet ready to be distributed.>
 #' @importFrom parallel mclapply detectCores
 #' @importFrom matrixStats rowMins
 #' @importFrom matrixStats rowMaxs
@@ -55,6 +55,7 @@
 ##library(dplyr)
 ##library(data.table) #
 ##library(parallel) ## native to R.
+##library(gdata)   ## for excel
 ##library(matrixStats) ## for rowMins/max function
 ###########################################################
 CreateUKBiobankPhentoypes<-function(Nvisits,visitreference,UKbioDataset,dfmaster_SQL_merge,dfDefinitions,Outputdir,VctOutputIndividualColumns=c() ){
