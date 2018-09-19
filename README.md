@@ -22,6 +22,10 @@ Used in:
 
 ## example:
 ```
+library(CreateUKBiobankPhentoypes)
+library(readstata13)
+library(data.table)
+
 UKbioDataset_file = "/path/to/file.dta"
 hesin_file="/path/to/hesin_2018-04-17.tsv"
 hesin_diagicd10_file="/path/to/hesin_diagicd10_2018-04-17.tsv"
