@@ -9,5 +9,6 @@ Used in:
 - Nat Commun. 2018 Mar 1;9(1):898. doi: 10.1038/s41467-018-03395-6.
 - Nat Commun. 2018 Mar 7;9(1):987. doi: 10.1038/s41467-018-03252-6.
 - J Am Heart Assoc. 2018 Jan 22;7(2). pii: e007621. doi: 10.1161/JAHA.117.007621.
-
+- J Am Coll Cardiol. 2017 Jul 25;70(4):506-507. doi: 10.1016/j.jacc.2017.05.044
+- Sci Rep. 2017 Jun 5;7(1):2761. doi: 10.1038/s41598-017-03062-8.
 
