@@ -42,7 +42,7 @@ UKbioDataset <- as.data.frame(read.dta13(UKbioDataset_file,convert.dates = TRUE)
 print("load hesin")
 dfhesintables<-LoadHesinTable(UKbioDataset,hesin_file,hesin_diagicd10_file,hesin_diagicd9_file,hesin_oper_file)
 
-print("constructing diagnoses for based line visit. 
+print("constructing diagnoses for baseline visit. 
 CreateUKBiobankPhentoypes(Nvisits=3,
                           visitreference=0,
                           UKbioDataset,
