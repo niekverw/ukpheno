@@ -12,3 +12,39 @@ Used in:
 - J Am Coll Cardiol. 2017 Jul 25;70(4):506-507. doi: 10.1016/j.jacc.2017.05.044
 - Sci Rep. 2017 Jun 5;7(1):2761. doi: 10.1038/s41598-017-03062-8.
 
+
+
+## Input: 
+
+- 1 datatable of UK Bioank in standard STATA format 
+- 4 tables containing hospital records of 1) Primary ICD10 diagnoses, 2) Secondary ICD10, 3) ICD9 and 4) OPERATION CODES. 
+- 1 table containing the diagnoses: example https://github.com/niekverw/ukpheno/blob/master/data/dfDefinitions.tsv
+
+## example:
+```
+UKbioDataset_file = "/path/to/file.dta"
+hesin_file="/path/to/hesin_2018-04-17.tsv"
+hesin_diagicd10_file="/path/to/hesin_diagicd10_2018-04-17.tsv"
+hesin_diagicd9_file="/path/to/hesin_diagicd9_2018-04-17.tsv"
+hesin_oper_file="/path/to/hesin_oper4_2018-04-17.tsv"
+dfDefinitions_file = "/path/to/https://github.com/niekverw/ukpheno/blob/master/data/dfDefinitions.tsv"
+Outputdir="/path/to/output"
+
+print("load definition table")
+dfDefinitions = data.frame(fread(dfDefinitions_file))
+write.table(ProcessDfDefinitions(dfDefinitions),paste(dfDefinitions_file,".check.tsv",sep=""),sep="\t",quote=FALSE,row.names = FALSE) # used to debug your definitions.
+print("load dataframe ukbiobank")
+UKbioDataset <- as.data.frame(read.dta13(UKbioDataset_file,convert.dates = TRUE))
+print("load hesin")
+dfhesintables<-LoadHesinTable(UKbioDataset,hesin_file,hesin_diagicd10_file,hesin_diagicd9_file,hesin_oper_file)
+
+print("constructing diagnoses for based line visit. 
+CreateUKBiobankPhentoypes(Nvisits=3,
+                          visitreference=0,
+                          UKbioDataset,
+                          dfhesintables,
+                          dfDefinitions,
+                          Outputdir,
+                          VctOutputIndividualColumns=c("TS","SR","TS_RX","RX","LAB")
+                          )
+```
