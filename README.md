@@ -1,5 +1,6 @@
 # ukpheno
-Creates dichotomous phenotypes for UKbio using all available data (ICD/oper/medication/self reports/age of diagnosis/visit-dates etc). The current output includes variables on history, study visit, future, time-to-first-event. happy to help. Mail@niekverweij.com.
+Creates dichotomous phenotypes for UKbio and a composite time-to-event variable  using ICD/oper/medication/self reports/age of diagnosis/visit-dates etc. 
+The current output includes variables on history, study visit, future, time-to-first-event, episode duration. If ICD10/9 is used for follow-up, it's possible to change the baseline date to for example an age of diagosis and its possible to set a treshold for episode duration. mail@niekverweij.com.
 
 Used in: 
 - JAMA Cardiol. 2018 Aug 1;3(8):693-702. doi: 10.1001/jamacardio.2018.1717. Associations of Combined Genetic and Lifestyle Risks With Incident Cardiovascular Disease and Diabetes in the UK Biobank Study.
