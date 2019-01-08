@@ -2,15 +2,16 @@
 Creates dichotomous phenotypes for UKbio using all available data (ICD/oper/medication/self reports/age of diagnosis/visit-dates etc). The current output includes variables on history, study visit, future, time-to-first-event. happy to help. Mail@niekverweij.com.
 
 Used in: 
-- JAMA Cardiol. 2018 Aug 1;3(8):693-702. doi: 10.1001/jamacardio.2018.1717.
-- Circ Res. 2018 Feb 2;122(3):433-443. (https://www.ncbi.nlm.nih.gov/pubmed/29212778)
-- J Am Heart Assoc. 2018 Apr 5;7(8). pii: e008341. doi: 10.1161/JAHA.117.008341.
-- Sci Rep. 2018 Apr 11;8(1):5817. doi: 10.1038/s41598-018-24002-0.
-- Nat Commun. 2018 Mar 1;9(1):898. doi: 10.1038/s41467-018-03395-6.
-- Nat Commun. 2018 Mar 7;9(1):987. doi: 10.1038/s41467-018-03252-6.
-- J Am Heart Assoc. 2018 Jan 22;7(2). pii: e007621. doi: 10.1161/JAHA.117.007621.
-- J Am Coll Cardiol. 2017 Jul 25;70(4):506-507. doi: 10.1016/j.jacc.2017.05.044
-- Sci Rep. 2017 Jun 5;7(1):2761. doi: 10.1038/s41598-017-03062-8. <- please cite if software is used. 
+- JAMA Cardiol. 2018 Aug 1;3(8):693-702. doi: 10.1001/jamacardio.2018.1717. Associations of Combined Genetic and Lifestyle Risks With Incident Cardiovascular Disease and Diabetes in the UK Biobank Study.
+- J Am Heart Assoc. 2018 Apr 5;7(8). pii: e008341. doi: 10.1161/JAHA.117.008341. Heart Rate Recovery 10 Seconds After Cessation of Exercise Predicts Death.
+- Sci Rep. 2018 Apr 11;8(1):5817. doi: 10.1038/s41598-018-24002-0. Causal Pathways from Blood Pressure to Larger Qrs Amplitudes a Mendelian Randomization Study.
+- Nat Commun. 2018 Mar 1;9(1):898. doi: 10.1038/s41467-018-03395-6. Genetic study links components of the autonomous nervous system to heart-rate profile during exercise.
+- Nat Commun. 2018 Mar 7;9(1):987. doi: 10.1038/s41467-018-03252-6.Genome-wide analysis yields new loci associating with aortic valve stenosis.
+- Circ Res. 2018 Feb 2;122(3):433-443. https://www.ncbi.nlm.nih.gov/pubmed/29212778. Identification of 64 Novel Genetic Loci Provides an Expanded View on the Genetic Architecture of Coronary Artery Disease.
+
+- J Am Heart Assoc. 2018 Jan 22;7(2). pii: e007621. doi: 10.1161/JAHA.117.007621. Relationship of Arterial Stiffness Index and Pulse Pressure With Cardiovascular Disease and Mortality.
+- J Am Coll Cardiol. 2017 Jul 25;70(4):506-507. doi: 10.1016/j.jacc.2017.05.044. Telomere Length and Risk of Cardiovascular Disease and Cancer.  
+- Sci Rep. 2017 Jun 5;7(1):2761. doi: 10.1038/s41598-017-03062-8. Identification of 15 novel risk loci for coronary artery disease and genetic risk of recurrent events, atrial fibrillation and heart failure. **<- please cite if software is used.**
 
 
 
