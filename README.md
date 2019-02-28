@@ -55,17 +55,5 @@ CreateUKBiobankPhentoypes(Nvisits=3,
                           )
 ```
 
-You might need to remove labels of the stata file, rename some of the columns and convert dates, havent used it with many different datasets yet.
 
-```
-names(UKbioDataset)[grepl('^s_',names(UKbioDataset) )] <- paste0("t",)
-UKbioDataset$ts_53_0_0 =  as.Date(UKbioDataset$ts_53_0_0, "%d%b%Y")
-UKbioDataset$ts_53_1_0 =  as.Date(UKbioDataset$ts_53_1_0, "%d%b%Y")
-UKbioDataset$ts_53_2_0 =  as.Date(UKbioDataset$ts_53_2_0, "%d%b%Y")
-
-UKbioDataset$ts_40000_0_0 =  as.Date(UKbioDataset$ts_40000_0_0, "%d%b%Y")
-UKbioDataset$ts_40000_1_0 =  as.Date(UKbioDataset$ts_40000_1_0, "%d%b%Y")
-UKbioDataset$ts_40000_2_0 =  as.Date(UKbioDataset$ts_40000_2_0, "%d%b%Y")
-
-```
 
