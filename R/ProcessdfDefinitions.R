@@ -147,7 +147,7 @@ ProcessDfDefinitions<-function(df,VctAllColumns=c("TS", "SR", "TS_RX", "RX", "LA
   df<-FillInSRdefinitions(df,"SR",c("n_20001_","n_20002_","n_20004_"))
   
   ### LOOKUP NAMES OF MEDICATION and put UKBIO.CODES in RX
-  df$n_20003_<-unlist(lapply( df$n_20003_, CovertMednamesToUkbcoding))
+  #df$n_20003_<-unlist(lapply( df$n_20003_, CovertMednamesToUkbcoding))
   df<-FillInSRdefinitions(df,"RX",c("n_20003_"))
   
   ### LOOKUP READ.CODES and put UKBIO.CODES in RX
