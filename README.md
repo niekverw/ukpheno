@@ -25,7 +25,7 @@ Used in:
 ## example:
 ```
 library(CreateUKBiobankPhentoypes)
-library(readstata13)
+library(readstata13) # make sure to install latest github version
 library(data.table)
 
 UKbioDataset_file = "/path/to/file.dta"
@@ -40,7 +40,7 @@ print("load definition table")
 dfDefinitions = data.frame(fread(dfDefinitions_file))
 write.table(ProcessDfDefinitions(dfDefinitions),paste(dfDefinitions_file,".check.tsv",sep=""),sep="\t",quote=FALSE,row.names = FALSE) # used to debug your definitions.
 print("load dataframe ukbiobank")
-UKbioDataset <- as.data.frame(read.dta13(UKbioDataset_file,convert.dates = TRUE))
+UKbioDataset <-  as.data.frame(read.dta13(UKbioDataset_file,convert.dates = TRUE,convert.factors=F))
 print("load hesin")
 dfhesintables<-LoadHesinTable(UKbioDataset,hesin_file,hesin_diagicd10_file,hesin_diagicd9_file,hesin_oper_file)
 
