@@ -24,11 +24,11 @@ CreateUKBiobankPhentoypes(Nvisits, visitreference, UKbioDataset,
 \item{dfTraitTable}{Dataframe: A Trait-definition table. (EXAMPLE: WORK IN PROGRESS)}
 }
 \description{
-CreateUKBiobankPhentoypes creates dichotomous phenotypes for UK Biobank using definitions that are based on the available variables (e.g. HES-data, mortality, toucschreen,  SR data). It is very in-efficient and uses STATA files in R which is not ideal...  The current output includes variables on history, study visit, future, time-to-first-event; WORK IN PROGRESS
+CreateUKBiobankPhentoypes creates dichotomous phenotypes for UK Biobank using definitions that are based on the available variables (e.g. HES-data, mortality, toucschreen,  SR data). The current output includes variables on history, study visit, future, time-to-first-event; WORK IN PROGRESS
 }
 \examples{
 
-library(gdata) 
+library(gdata)
 library(readstata13)
 library(CreateUKBiobankPhentoypes)
 Nvisits=3
@@ -37,13 +37,13 @@ visitreference=0
 Outputdir<-getwd()
 dfUKbioDataset<-as.data.frame(read.dta13("/path/to/UKbioDataset_file.dta",convert.dates = TRUE,convert.factors=FALSE))
 
-hesin_file="/path/to/hesin-4july2016.tsv" 
+hesin_file="/path/to/hesin-4july2016.tsv"
 hesin_diagicd10_file="/path/to/hesin_diagicd10-4july2016.tsv"
 hesin_diagicd9_file="/path/to/hesin_diagicd9_22_03_2016.tsv"
 hesin_oper_file="/path/to/hesin_oper-4july2016.tsv"
 dfhesintables<-LoadHesinTable(dfUKbioDataset,hesin_file,hesin_diagicd10_file,hesin_diagicd9_file,hesin_oper_file)
 
-## load phenotype definitions. 
+## load phenotype definitions.
 data(dfDefinitions)
 
 
@@ -51,13 +51,13 @@ data(dfDefinitions)
 
 #run with minimum variables:
 CreateUKBiobankPhentoypes(Nvisits,visitreference,UKbioDataset,dfhesintables,dfDefinitions,Outputdir)
-#which is the same as: 
+#which is the same as:
 CreateUKBiobankPhentoypes(Nvisits,visitreference,UKbioDataset,dfhesintables,dfDefinitions,Outputdir,VctOutputIndividualColumns=c(),VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","RX","LAB") )
 
 #to output the variables based on RX (medication) in an *_RX file and exclude RX from the aggregate *_UKBV files run the following:
 CreateUKBiobankPhentoypes(Nvisits,visitreference,UKbioDataset,dfhesintables,dfDefinitions,Outputdir,VctOutputIndividualColumns=c("RX",VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","LAB") )
 }
 \references{
-<Please contact mail@niekverweij.com, this is not yet ready to be distributed.>
+<Please contact mail@niekverweij.com, this package is not yet ready to be distributed.>
 }
 \keyword{CreateUKBiobankPhentoypes}

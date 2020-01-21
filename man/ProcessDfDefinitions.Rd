@@ -4,9 +4,10 @@
 \alias{ProcessDfDefinitions}
 \title{ProcessDfDefinitions}
 \usage{
-ProcessDfDefinitions(df, VctAllColumns = c("TS", "SR", "TS_RX", "RX", "LAB",
-  "ICD10CODES", "ICD9CODES", "OPERCODES", "TS_AGE_DIAG_COLNAME", "READCODES",
-  "n_20001_", "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY"))
+ProcessDfDefinitions(df, VctAllColumns = c("TS", "SR", "TS_RX", "RX",
+  "LAB", "ICD10CODES", "ICD9CODES", "OPERCODES", "TS_AGE_DIAG_COLNAME",
+  "READCODES", "n_20001_", "n_20002_", "n_20003_", "n_20004_",
+  "DEPENDENCY"))
 }
 \arguments{
 \item{VctAllColumns}{Vct}
@@ -21,11 +22,11 @@ Process definitions, for input
 }
 \examples{
 #
-#This function processes an excel file with definitions and is automtically performed in CreateUKBiobankPhentoypes(). 
-#It can be usefull to run this function as a check prior to running CreateUKBiobankPhentoypes. 
+#This function processes an excel file with definitions and is automtically performed in CreateUKBiobankPhentoypes().
+#It can be usefull to run this function as a check prior to running CreateUKBiobankPhentoypes.
 #
-#VctAllColumns contains all column names of interest, so that it can ignore everything else. 
-#20001, 20002 and 20004 go into SR 
+#VctAllColumns contains all column names of interest, so that it can ignore everything else.
+#20001, 20002 and 20004 go into SR
 #READCODES and 20003 is parsed into RX
 #
 #

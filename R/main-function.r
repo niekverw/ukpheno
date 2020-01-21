@@ -1,4 +1,3 @@
-
 #### -----#### -----#### -----#### -----#### -----#### -----#### -----#### -----#### -----
 #' CreateUKBiobankPhentoypes - Function
 #'
@@ -76,7 +75,9 @@ CreateUKBiobankPhentoypes<-function(Nvisits,visitreference,UKbioDataset,dfmaster
   ################################################################################################################################################
 
   # dfmaster_SQL_merge<-dfhesintables
-  # source("/data_work/bitbucket/ukbio-github/ukpheno/R/ProcessdfDefinitions.R")
+  # i=1
+  # visitreference=1
+
   visitdt=paste("ts_53_",visitreference,"_0",sep="")
 
   print("processing dfDefinitions")
@@ -309,7 +310,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,visitreference,UKbioDataset,dfmaster
 
 
 
-
+#' @export
 Outcome_HES<-function(dfmaster_SQL_merge,StrTrait,StrDescription,VctCodes,epidurfilter=0,StrColumnForHescodes,StrColumnnameForEventDate,StrColumnnameForVisitDate,StataOutputFile){
   # epidurfilter=0
   ### CHECK IF FILE EXISTS:
@@ -388,7 +389,7 @@ Outcome_HES<-function(dfmaster_SQL_merge,StrTrait,StrDescription,VctCodes,epidur
   return(dfmaster_SQL_merge_oper)
 }
 
-
+#' @export
 Death_Masterset<-function(dfmaster_TSDEATHMEDICD10_visitdtonly,StrTrait,StrDescription,StrName,VctCodes,StrFieldcode,StrFieldDateColumn,visitdt,StataOutputFile){
   ### CHECK IF FILE EXISTS:
   if( file.exists(StataOutputFile )) {
@@ -438,6 +439,8 @@ Death_Masterset<-function(dfmaster_TSDEATHMEDICD10_visitdtonly,StrTrait,StrDescr
   }
 }
 
+
+#' @export
 Query_Masterset2<-function(dfmaster_TSDEATHMEDICD10_visitdtonly,StrTrait,StrDescription,StrName,VctTSconditions,StataOutputFile,visitreference,Nvisits){
   ### CHECK IF FILE EXISTS:
   if( file.exists(StataOutputFile )) {
@@ -593,11 +596,14 @@ Query_Masterset2<-function(dfmaster_TSDEATHMEDICD10_visitdtonly,StrTrait,StrDesc
 
 }
 
+#' @export
 CheckIfColumnsAreAvailable<-function(df,VctColumnames){
   #TODO check if columns exists before running functions!!
   return(0)
 }
 
+
+#' @export
 Query_TSAmin_masterset<-function(dfmaster_TSDEATHMEDICD10_visitdtonly,StrTrait,StrDescription,StrName,VctTSAcolumns,visitdt,StataOutputFile){
   #dfmaster_TSDEATHMEDICD10_visitdtonly<-UKbioDatasetm
   #StrTrait<-"a1def"
@@ -697,7 +703,6 @@ Query_TSAmin_masterset<-function(dfmaster_TSDEATHMEDICD10_visitdtonly,StrTrait,S
 #' ExtractVarsFromMasterSet(UKbioDataset,dfDefinitions_VarSelection,StataOutputFile)
 #'
 #' @export
-
 ExtractVarsFromMasterSet<-function(UKbioDataset,dfDefinitions_VarSelection,StataOutputFile){
 
   #OutputdirMerged=paste(Outputdir,"/merged/",sep="")

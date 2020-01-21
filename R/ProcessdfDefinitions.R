@@ -1,9 +1,11 @@
+#' @export
 ConvertFactorsToStringReplaceNAInDf<-function (df) {
   df <- data.frame(lapply(df, as.character), stringsAsFactors=FALSE) ## CHANGE Factors to strings; everything is now a string.
   df[df==""]  <- NA ### REPLACE EMPTY WITH NA.
   return(df)
 }
 
+#' @export
 pasteRemoveNA <- function(..., sep = " ", collapse = NULL, na.rm = F) {
   if (na.rm == F)
     paste(..., sep = sep, collapse = collapse)
@@ -26,13 +28,14 @@ pasteRemoveNA <- function(..., sep = " ", collapse = NULL, na.rm = F) {
     }
 }
 
+#' @export
 CheckDuplicateTRAITS<-function(df){
   if(length(unique(duplicated(df["TRAIT"])))>1){stop("TRAIT column contains duplicate ID's")}
 }
 
 
 
-
+#' @export
 PreProcessDfDefinitions<-function(df,VctAllColumns){
 ## df<-dfDefinitions
   ## for the names: remove everything between dots (R converts symbols to dots "(,.-)/" etc )
@@ -53,6 +56,7 @@ PreProcessDfDefinitions<-function(df,VctAllColumns){
   return(df)
 }
 
+#' @export
 FillInSRdefinitions<-function(df,Var="SR",cols=c("n_20001_","n_20002_","n_20004_") ) {
   ## fill in SR
   df[,Var]<-as.character(df[,Var])
@@ -78,6 +82,7 @@ FillInSRdefinitions<-function(df,Var="SR",cols=c("n_20001_","n_20002_","n_20004_
   return(df)
 }
 
+#' @export
 CovertMednamesToUkbcoding<- function(StrRx){
   #StrRx<-"phenformin,metformin,buformin,glibenclamide,chlorpropamide,tolbutamide,glibornuride,tolazamide,carbutamide,glipizide,gliquidone,gliclazide,metahexamide,glisoxepide,glimepiride,acetohexamide,glymidine,acarbose,miglitol,voglibose,troglitazone,rosiglitazone,pioglitazone,sitagliptin,vildagliptin,saxagliptin,alogliptin,linagliptin,gemigliptin,repaglinide,nateglinide,exenatide,pramlintide,benfluorex,liraglutide,mitiglinide,dapagliflozin,lixisenatide,canagliflozin,empagliflozin,albiglutide,dulaglutide"
   StrRx<-as.character(StrRx)
@@ -88,6 +93,7 @@ CovertMednamesToUkbcoding<- function(StrRx){
   return(StrRxCodes)
 }
 
+#' @export
 CovertReadcodesToUkbcoding<- function(StrRx){
  # StrRx<-"f3,f4,ft"
   StrRx<-as.character(StrRx)
@@ -100,6 +106,7 @@ CovertReadcodesToUkbcoding<- function(StrRx){
 
 
 #### TODO:
+#' @export
 ReduceRedundancyDf<- function(df){ ### NOT really nessesary
   return(df)
 }

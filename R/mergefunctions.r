@@ -1,5 +1,5 @@
 #library(matrixStats)
-
+#' @export
 min_nv<-function(x){ ## select value in the last half of x, on the basis of the first half of x
   x.lookup=x[1:(length(x)/2) ]
   x.return=x[(1+(length(x)/2)):(length(x)) ]
@@ -15,6 +15,7 @@ min_nv<-function(x){ ## select value in the last half of x, on the basis of the 
 
 
 ### MERGING FUNCTION:
+#' @export
 MultiMergeEpisodeData <- function(filesEpisode,StrTrait,StrDescription,HEScodes){
   #  filesEpisode<-c("/data_work/databases/ukbiobanks/Phenotypes/test/ts_53_2_0/HESIN/CAD_D9hes.dta", "/data_work/databases/ukbiobanks/Phenotypes/test/ts_53_2_0/HESIN/CAD_Dhes.dta", "/data_work/databases/ukbiobanks/Phenotypes/test/ts_53_2_0/HESIN/CAD_DO.dta", "/data_work/databases/ukbiobanks/Phenotypes/test/ts_53_2_0/HESIN/CAD_Ohes.dta")
   # filesEpisode<-c("/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/HESIN/AF_D9hes.dta","/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/HESIN/AF_Dhes.dta","/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/HESIN/AF_DO.dta","/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/HESIN/AF_DOp.dta")
@@ -126,6 +127,7 @@ MultiMergeEpisodeData <- function(filesEpisode,StrTrait,StrDescription,HEScodes)
   return(dfMerged)
 }
 
+#' @export
 MultiMergeHESIN_UKBV <- function(files,StrTrait,StrDescription,HEScodes,StataOutputFile){
   #  StataOutputFile="/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/CAD2_testNewFU.dta"
   #  files<-c("/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/HESIN/merged/CAD2_merged.dta","/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/UKBVisit/ALL/CAD2_UKBV.dta"  ,"/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/UKBVisit/CAD2_TSAd.dta"   )
@@ -311,7 +313,7 @@ MultiMergeHESIN_UKBV <- function(files,StrTrait,StrDescription,HEScodes,StataOut
 
 
 
-
+#' @export
 MultiMergeHESIN_medication_UKBV <-function(files,StrTrait,StrDescription,HEScodes,StataOutputFile){
 
 

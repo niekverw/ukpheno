@@ -47,6 +47,7 @@ LoadHesinTable = function(UKbioDataset,hesin_file,hesin_diagicd10_file,hesin_dia
   #dfMerged$opdate_1!=dfMerged$opdate_2
 }
 ##########################################################################################
+#' @export
 loadtable = function(file,vars,suffix){
   df<-data.table::fread(file,header=T,sep="\t", stringsAsFactors=FALSE, na.strings="")
   names(df)[names(df) %in% vars]<-paste(vars,suffix,sep="")
