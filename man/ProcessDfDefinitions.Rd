@@ -4,9 +4,9 @@
 \alias{ProcessDfDefinitions}
 \title{ProcessDfDefinitions}
 \usage{
-ProcessDfDefinitions(df, VctAllColumns = c("TS", "SR", "TS_RX", "RX",
+ProcessDfDefinitions(df, VctAllColumns = c("TS", "SR", "TS_RX", "SR_RX",
   "LAB", "ICD10CODES", "ICD9CODES", "OPERCODES", "TS_AGE_DIAG_COLNAME",
-  "READCODES", "n_20001_", "n_20002_", "n_20003_", "n_20004_",
+  "READCODES", "CTV3", "n_20001_", "n_20002_", "n_20003_", "n_20004_",
   "DEPENDENCY"))
 }
 \arguments{
@@ -31,7 +31,7 @@ Process definitions, for input
 #
 #
 #
-VctAllColumns<-  c("TS", "SR", "TS_RX", "RX", "LAB", "ICD10CODES", "ICD9CODES", "OPERCODES", "TS_AGE_DIAG_COLNAME", "READCODES", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
+VctAllColumns<-  c("TS", "SR", "TS_RX", "SR_RX", "LAB", "ICD10CODES", "ICD9CODES", "OPERCODES", "TS_AGE_DIAG_COLNAME", "READCODES", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
 ProcessDfDefinitions(dfDefinitions,VctAllColumns)
 
 }

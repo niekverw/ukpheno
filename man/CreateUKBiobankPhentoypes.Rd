@@ -5,7 +5,7 @@
 \title{CreateUKBiobankPhentoypes - Function}
 \usage{
 CreateUKBiobankPhentoypes(Nvisits, visitreference, UKbioDataset,
-  dfmaster_SQL_merge, dfDefinitions, Outputdir,
+  dfmaster_SQL_merge, dfgpclinical, dfgpscripts, dfDefinitions, Outputdir,
   VctOutputIndividualColumns = c())
 }
 \arguments{
@@ -17,7 +17,7 @@ CreateUKBiobankPhentoypes(Nvisits, visitreference, UKbioDataset,
 
 \item{Outputdir}{Output directory}
 
-\item{VctOutputIndividualColumns}{set VctOutputIndividualColumns=c("TS","SR","TS_RX","RX","LAB") to output all individual columns, default is 'VctOutputIndividualColumns=c()'}
+\item{VctOutputIndividualColumns}{set VctOutputIndividualColumns=c("TS","SR","TS_RX","SR_RX","LAB") to output all individual columns, default is 'VctOutputIndividualColumns=c()'}
 
 \item{dfUKbioDataset}{Dataframe:The main UKBiobank dataset, currently only STATA files are allowed that are processed using the ukb_conv tool. Load with as.data.frame(read.dta13(file,convert.dates = TRUE,convert.factors=FALSE))}
 
@@ -52,10 +52,10 @@ data(dfDefinitions)
 #run with minimum variables:
 CreateUKBiobankPhentoypes(Nvisits,visitreference,UKbioDataset,dfhesintables,dfDefinitions,Outputdir)
 #which is the same as:
-CreateUKBiobankPhentoypes(Nvisits,visitreference,UKbioDataset,dfhesintables,dfDefinitions,Outputdir,VctOutputIndividualColumns=c(),VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","RX","LAB") )
+CreateUKBiobankPhentoypes(Nvisits,visitreference,UKbioDataset,dfhesintables,dfDefinitions,Outputdir,VctOutputIndividualColumns=c(),VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","SR_RX","LAB") )
 
 #to output the variables based on RX (medication) in an *_RX file and exclude RX from the aggregate *_UKBV files run the following:
-CreateUKBiobankPhentoypes(Nvisits,visitreference,UKbioDataset,dfhesintables,dfDefinitions,Outputdir,VctOutputIndividualColumns=c("RX",VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","LAB") )
+CreateUKBiobankPhentoypes(Nvisits,visitreference,UKbioDataset,dfhesintables,dfDefinitions,Outputdir,VctOutputIndividualColumns=c("SR_RX",VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","LAB") )
 }
 \references{
 <Please contact mail@niekverweij.com, this package is not yet ready to be distributed.>

@@ -16,7 +16,7 @@ min_nv<-function(x){ ## select value in the last half of x, on the basis of the 
 
 ### MERGING FUNCTION:
 #' @export
-MultiMergeEpisodeData <- function(filesEpisode,StrTrait,StrDescription,HEScodes){
+MultiMergeEpisodeData <- function(filesEpisode,StrTrait,StrDescription,HEScodes,suffix="_HES_"){
   #  filesEpisode<-c("/data_work/databases/ukbiobanks/Phenotypes/test/ts_53_2_0/HESIN/CAD_D9hes.dta", "/data_work/databases/ukbiobanks/Phenotypes/test/ts_53_2_0/HESIN/CAD_Dhes.dta", "/data_work/databases/ukbiobanks/Phenotypes/test/ts_53_2_0/HESIN/CAD_DO.dta", "/data_work/databases/ukbiobanks/Phenotypes/test/ts_53_2_0/HESIN/CAD_Ohes.dta")
   # filesEpisode<-c("/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/HESIN/AF_D9hes.dta","/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/HESIN/AF_Dhes.dta","/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/HESIN/AF_DO.dta","/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/HESIN/AF_DOp.dta")
   #filesEpisode<-c("/data_work/databases/ukbiobanks/Phenotypes/test/ts_53_0_0/HESIN/CVD_Dhes.dta","/data_work/databases/ukbiobanks/Phenotypes/test/ts_53_0_0/HESIN/CVD_DO.dta","/data_work/databases/ukbiobanks/Phenotypes/test/ts_53_0_0/HESIN/CVD_DOp.dta")
@@ -28,8 +28,8 @@ MultiMergeEpisodeData <- function(filesEpisode,StrTrait,StrDescription,HEScodes)
   #  "/data_work/databases/ukbiobank/9628_pvdh/HFmortality/ts_53_0_0/HESIN/HfMortHfinclQ_Dhes.dta",
   #  "/data_work/databases/ukbiobank/9628_pvdh/HFmortality/ts_53_0_0/HESIN/HfMortHfinclQ_DO.dta",
   #  "/data_work/databases/ukbiobank/9628_pvdh/HFmortality/ts_53_0_0/HESIN/HfMortHfinclQ_DOp.dta")
-
-  print(paste("merging HESIN",filesEpisode))
+  # suffix="_HES_"
+  print(paste("merging",filesEpisode))
 
   LstDf = lapply(filesEpisode, function(x){    as.data.frame(read.dta13(x,convert.dates = TRUE))   })
   VctDescriptions<-unlist(lapply(LstDf,function(x){ varlabel(x) } ))
@@ -100,10 +100,10 @@ MultiMergeEpisodeData <- function(filesEpisode,StrTrait,StrDescription,HEScodes)
 
   ### Add _HES to the variable name of HX/FU
   newcols = c("HXn","HXd","HXt","HXto","FUn","FUd","FUt","FUto")
-  names(dfMerged)[names(dfMerged) %in% newcols] <- paste0(StrTrait,"_HES_",names(dfMerged)[names(dfMerged) %in% newcols ])
+  names(dfMerged)[names(dfMerged) %in% newcols] <- paste0(StrTrait,suffix,names(dfMerged)[names(dfMerged) %in% newcols ])
 
   ## remove indiviual HES data
-  VctRemoveCols<-!grepl( "_DO_FUd" , names( dfMerged ) ) & !grepl( "_DOp_FUd" , names( dfMerged ) )  & !grepl( "_Dhes_" , names( dfMerged ) ) & !grepl( "_D9hes_" , names( dfMerged ) ) & !grepl( "_Ohes_" , names( dfMerged ) )
+  VctRemoveCols<-!grepl( "_DO_FUd" , names( dfMerged ) ) & !grepl( "_Read_" , names( dfMerged ) ) & !grepl( "_DOp_FUd" , names( dfMerged ) )  & !grepl( "_Dhes_" , names( dfMerged ) ) & !grepl( "_D9hes_" , names( dfMerged ) ) & !grepl( "_Ohes_" , names( dfMerged ) )
   dfMerged<-dfMerged[ , VctRemoveCols  ] ## remove individual followup data.
 
   names(dfMerged) %in% dfVctDescriptions[,1]
@@ -151,14 +151,14 @@ MultiMergeHESIN_UKBV <- function(files,StrTrait,StrDescription,HEScodes,StataOut
 
   dfMerged<-Reduce(function(x,y) {merge(x,y,by="n_eid",all=TRUE)}, LstDf)
 
-  StrTrait_HXd<-paste(StrTrait,"_HES_HXd",sep="")
-  StrTrait_HXn<-paste(StrTrait,"_HES_HXn",sep="")
-  StrTrait_HXt<-paste(StrTrait,"_HES_HXt",sep="")
-  StrTrait_HXto<-paste(StrTrait,"_HES_HXto",sep="")
-  StrTrait_FUd<- paste(StrTrait,"_HES_FUd",sep="")
-  StrTrait_FUn<- paste(StrTrait,"_HES_FUn",sep="")
-  StrTrait_FUt<- paste(StrTrait,"_HES_FUt",sep="")
-  StrTrait_FUto<- paste(StrTrait,"_HES_FUto",sep="")
+  StrTrait_HXd<-paste(StrTrait,"_EP_HXd",sep="")
+  StrTrait_HXn<-paste(StrTrait,"_EP_HXn",sep="")
+  StrTrait_HXt<-paste(StrTrait,"_EP_HXt",sep="")
+  StrTrait_HXto<-paste(StrTrait,"_EP_HXto",sep="")
+  StrTrait_FUd<- paste(StrTrait,"_EP_FUd",sep="")
+  StrTrait_FUn<- paste(StrTrait,"_EP_FUn",sep="")
+  StrTrait_FUt<- paste(StrTrait,"_EP_FUt",sep="")
+  StrTrait_FUto<- paste(StrTrait,"_EP_FUto",sep="")
   StrTrait_UKBV_HXn<-paste(StrTrait,"_UKBV_HXn",sep="")
   StrTrait_UKBV_HXdlv<-paste(StrTrait,"_UKBV_HXdlv",sep="")
   StrTrait_UKBV_HXd<-paste(StrTrait,"_UKBV_HXd",sep="")
@@ -290,7 +290,7 @@ MultiMergeHESIN_UKBV <- function(files,StrTrait,StrDescription,HEScodes,StataOut
   ### check which sources were used:
 
   #### FIX NAMES:
- # names(dfMerged)[length(names(dfMerged)):(length(names(dfMerged))-4)]<-paste(StrTrait,"_",names(dfMerged)[length(names(dfMerged)):(length(names(dfMerged))-4)] , sep="")
+  # names(dfMerged)[length(names(dfMerged)):(length(names(dfMerged))-4)]<-paste(StrTrait,"_",names(dfMerged)[length(names(dfMerged)):(length(names(dfMerged))-4)] , sep="")
   newcols <- c("HXd","FUd","FUn","FU","ANY","HX","HXn")
   names(dfMerged)[names(dfMerged) %in% newcols ] <- paste(StrTrait,"_", names(dfMerged)[names(dfMerged) %in% newcols] , sep="")
 
