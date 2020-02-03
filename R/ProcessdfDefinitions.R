@@ -36,7 +36,7 @@ CheckDuplicateTRAITS<-function(df){
 
 
 #' @export
-PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=c("ICD10CODES","ICD9CODES","OPERCODES")){
+PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=NULL){ # c("ICD10CODES","ICD9CODES","OPERCODES")
 ## df<-dfDefinitions
   # check if nrows==1
   check=0
@@ -58,7 +58,14 @@ PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=c("ICD10CODES"
   trim.commas <- function (x) gsub("(?<=[\\,])\\,*|^\\,+|\\,+$", "", x, perl=TRUE)
   df[,VctAllColumns]<- data.frame(apply(df[,VctAllColumns],2,function(x) trim.commas(x)))
 
-  df[,VctColstoupper] <- apply(df[,VctColstoupper],2,toupper)
+
+  if(length(VctColstoupper)==1){
+    df[,VctColstoupper] <- toupper(df[,VctColstoupper])
+  }
+  if(length(VctColstoupper)>1){
+    df[,VctColstoupper] <- apply(df[,VctColstoupper],2,toupper)
+  }
+
   df<-ConvertFactorsToStringReplaceNAInDf(df) #### CONVERT FACTOR TO STRING
 
   if(check==1){df<-df[1,]}
@@ -160,13 +167,14 @@ ProcessDfDefinitions<-function(df,
                                                "BNFCODES","DMDCODES",
                                                "n_20001_",    "n_20002_", "n_20003_", "n_20004_",
                                                "DEPENDENCY"),
+                               VctColstoupper=c("ICD10CODES","ICD9CODES","OPERCODES"),
                                fill_dependencies=T){
   # df<- dfDefinitions  #  df<- dfDefinitions2
   # VctAllColumns<-  c("TS", "SR", "TS_RX", "SR_RX", "LAB", "ICD10CODES", "ICD9CODES", "OPERCODES", "TS_AGE_DIAG_COLNAME", "READCODES","CTV3", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
 
   #if(nrow(df)==1 ) {stop("please have more than 1 phenotype definition.")} ## check if excel file has more than 1 row.
 
-  df<-PreProcessDfDefinitions(df,VctAllColumns,toupper=c("ICD10CODES","ICD9CODES","OPERCODES"))
+  df<-PreProcessDfDefinitions(df,VctAllColumns,VctColstoupper=VctColstoupper)
   #################################
   CheckDuplicateTRAITS(df) # check duplicateids.
   ### df = excel matrix. 1 hij loopt een voor een over elke rij heen,

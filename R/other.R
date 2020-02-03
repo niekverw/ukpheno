@@ -24,7 +24,7 @@ merge_stata_files <- function(statafiles=list.files(dir.ukbpheno_all,full.names 
 
 #' @export
 summarize_cross_phenotype_fields <- function(dir.ukbpheno,lst.n_eids){
-  searchsources=c("DO","DOp","Dhes","D9hes","Ohes","TS","SR","TS_RX","ALL","Read")
+  searchsources=c("DO","DOp","Dhes","D9hes","Ohes","TS","SR","TS_RX","SR_RX","ALL","Read","CTV3","BNF","DMD")
 
   files.all <- list.files(dir.ukbpheno,full.names = T,recursive = T )
   dfpheno <- as.data.frame(cbind(files.all,unlist(lapply(files.all,basename))))

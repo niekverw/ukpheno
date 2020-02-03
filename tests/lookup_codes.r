@@ -34,6 +34,19 @@ dfCodesheet.icd10_lkp <- rbind(dfCodesheet.ICD10.coding19[,1:2],dfCodesheet.icd1
 dfCodesheet.OPCS4.coding240 <- data.frame(fread("data/OPCS4.coding240.tsv"))
 dfCodesheet.opcs4_lkp<- dfCodesheet.OPCS4.coding240
 
+
+dfCodesheet.read_ctv3_icd9 <- as.data.frame(read_xlsx(fcoding.xls,sheet="read_ctv3_icd9"))
+dfCodesheet.read_ctv3_icd10 <- as.data.frame(read_xlsx(fcoding.xls,sheet="read_ctv3_icd10"))
+dfCodesheet.read_ctv3_opcs4 <- as.data.frame(read_xlsx(fcoding.xls,sheet="read_ctv3_opcs4"))
+
+dfCodesheet.read_ctv3_lkp <- as.data.frame(read_xlsx(fcoding.xls,sheet="read_ctv3_lkp"))
+
+
+### OPCS4
+dfCodesheet.read_v2_opcs4 <- as.data.frame(read_xlsx(fcoding.xls,sheet="read_v2_opcs4"))
+# dfCodesheet.opcs4_lkp <- as.data.frame(read_xlsx(fcoding.xls,sheet="opcs4_lkp")) # certainly not complete!
+
+
 #E8801
 #dfCodesheet.read_v2_lkp[duplicated(dfCodesheet.read_v2_lkp$read_code)==TRUE,]
 unique(dfCodesheet.read_v2_lkp$read_code)
@@ -189,18 +202,54 @@ expand_clean_codes(col =df$READCODES, from.code="read_code",description.id='text
 
 
 # suggest READ codes based on all ICD10,9,oper,read,CTVT ....
+df = data.frame(fread(dfDefinitions_file))
 
-col=expand_clean_codes(col =df$ICD10CODES, from.code="ICD10",description.id='DESCRIPTION',lookuptable = dfCodesheet.icd10_lkp,add_description=T)
-icd10read<-convert_definition_column(source_col = col,
-                          target_col = NULL,
-                          from.code="icd10_code",to.code="read_code",lookuptable = dfCodesheet.read_v2_icd10,
-                          description.code=NULL,description.id="term_description",description.lookuptable=NULL) #,lookuptable = dfCodesheetREAD_SR.Coding)
+suggestcodes <- function(df){
+  col=expand_clean_codes(col =df$ICD10CODES, from.code="ICD10",description.id='DESCRIPTION',lookuptable = dfCodesheet.icd10_lkp,add_description=T)
+  df$icd10readv2 <- convert_definition_column(source_col = col,
+                            target_col = NULL,
+                            from.code="icd10_code",to.code="read_code",lookuptable = dfCodesheet.read_v2_icd10,
+                            description.code=NULL,description.id="text",description.lookuptable=dfCodesheet.read_v2_lkp) #,lookuptable = dfCodesheetREAD_SR.Coding)
 
-col=expand_clean_codes(col =df$ICD9CODES, from.code="ICD9",description.id='DESCRIPTION_ICD9',lookuptable = dfCodesheet.icd9_lkp,add_description=T)
-icd9read <- convert_definition_column(source_col = col,
-                                target_col = NULL,
-                                from.code="icd9_code",to.code="read_code",lookuptable = dfCodesheet.read_v2_icd9,
-                                description.code=NULL,description.id="text",description.lookuptable=dfCodesheet.read_v2_lkp) #,lookuptable = dfCodesheetREAD_SR.Coding)
+  col=expand_clean_codes(col =df$ICD9CODES, from.code="ICD9",description.id='DESCRIPTION_ICD9',lookuptable = dfCodesheet.icd9_lkp,add_description=T)
+  df$icd9readv2 <- convert_definition_column(source_col = col,
+                                  target_col = NULL,
+                                  from.code="icd9_code",to.code="read_code",lookuptable = dfCodesheet.read_v2_icd9,
+                                  description.code=NULL,description.id="text",description.lookuptable=dfCodesheet.read_v2_lkp) #,lookuptable = dfCodesheetREAD_SR.Coding)
+
+  #col=expand_clean_codes(col =df$OPERCODES, from.code="ICD9",description.id='DESCRIPTION_ICD9',lookuptable = dfCodesheet.icd9_lkp,add_description=T)
+  df$opcs4readv2 <- convert_definition_column(source_col = df$OPERCODES,
+                                        target_col = NULL,
+                                        from.code="opcs_4.2_code",to.code="read_code",lookuptable = dfCodesheet.read_v2_opcs4,
+                                        description.code=NULL,description.id="text",description.lookuptable=dfCodesheet.read_v2_lkp) #,lookuptable = dfCodesheetREAD_SR.Coding)
+
+
+  ######  ######  ######  ######  ######  ######  ######  ######  ######  ######  ######
+  col=expand_clean_codes(col =df$ICD10CODES, from.code="ICD10",description.id='DESCRIPTION',lookuptable = dfCodesheet.icd10_lkp,add_description=T)
+  df$icd10readctv3 <- convert_definition_column(source_col = col,
+                                                target_col = NULL,
+                                                from.code="icd10_code",to.code="read_code",lookuptable = dfCodesheet.read_ctv3_icd10,
+                                                description.code=NULL,description.id="term_description",description.lookuptable=dfCodesheet.read_ctv3_lkp) #,lookuptable = dfCodesheetREAD_SR.Coding)
+
+  col=expand_clean_codes(col =df$ICD9CODES, from.code="ICD9",description.id='DESCRIPTION_ICD9',lookuptable = dfCodesheet.icd9_lkp,add_description=T)
+  df$icd9readctv3 <- convert_definition_column(source_col = col,
+                                               target_col = NULL,
+                                               from.code="icd9_code",to.code="read_code",lookuptable = dfCodesheet.read_ctv3_icd9,
+                                               description.code=NULL,description.id="term_description",description.lookuptable=dfCodesheet.read_ctv3_lkp) #,lookuptable = dfCodesheetREAD_SR.Coding)
+
+
+
+  #col=expand_clean_codes(col =df$OPERCODES, from.code="ICD9",description.id='DESCRIPTION_ICD9',lookuptable = dfCodesheet.icd9_lkp,add_description=T)
+  df$opcs4readctv3 <- convert_definition_column(source_col = df$OPERCODES,
+                                                target_col = NULL,
+                                                from.code="opcs4_code",to.code="read_code",lookuptable = dfCodesheet.read_ctv3_opcs4,
+                                                description.code=NULL,description.id="term_description",description.lookuptable=dfCodesheet.read_ctv3_lkp) #,lookuptable = dfCodesheetREAD_SR.Coding)
+
+  return(data.frame(df))
+
+}
+
+suggestcodes(df)
 
 dfCodesheet.read_v2_icd10[grep("-",dfCodesheet.read_v2_icd10$icd10_code),]
 
@@ -210,7 +259,7 @@ dfCodesheet.read_v2_icd10[grep("-",dfCodesheet.read_v2_icd10$icd10_code),]
 
 #######################################################################
 #
-dfDefs <- dfDefinitions
+dfDefs <-  data.frame(fread(dfDefinitions_file))
 colnames(dfDefs) <- colnames(ProcessDfDefinitions(dfDefs,fill_dependencies = F))
 
 library(shiny)
@@ -233,17 +282,27 @@ ui <- fluidPage(
     mainPanel(
       tabsetPanel(
         tabPanel("original ", DT::dataTableOutput("ox")),
-        tabPanel("cleaned",  DT::dataTableOutput("ox_clean"))
+        tabPanel("cleaned",  DT::dataTableOutput("ox_clean")),
+        tabPanel("suggest",  DT::dataTableOutput("ox_suggestdf")),
+        tabPanel("read_v2_lkp",  DT::dataTableOutput("odfCodesheet.read_v2_lkp")),
+        tabPanel("read_ctv3_lkp",  DT::dataTableOutput("odfCodesheet.read_ctv3_lkp"))
+
+
+
       )
     )
   )
 )
 
 
+
+
 server <- function(input, output, session) {
   rdef <- reactiveValues(dforigin=dfDefs,
                          dforiginsliced=dfDefs,
-                         dfclean=ProcessDfDefinitions(dfDefs,fill_dependencies = F))
+                         dfclean=ProcessDfDefinitions(dfDefs,fill_dependencies = F),
+                         dfsuggest=suggestcodes(dfDefs)
+                         )
 
   #y <- function() x
   #x$Date = Sys.time() + seq_len(nrow(x))
@@ -255,6 +314,8 @@ server <- function(input, output, session) {
     rdef$dforiginsliced
     },options = list(pageLength = 100), editable = TRUE, selection='single') #,class = 'nowrap stripe compact',selection = 'none',
 
+
+  #
   # output$ox = DT::renderDataTable({
   #   x
   #   },options = list(pageLength = 100), editable = TRUE, selection='single') #,class = 'nowrap stripe compact',selection = 'none',
@@ -271,18 +332,48 @@ server <- function(input, output, session) {
   # })
 
 
-  #
-  observeEvent(input$oxids_rows_selected,  ignoreInit=TRUE,{
-    i <- input$oxids_rows_selected
-    print(i)
-    rdef$dfclean <<- t(ProcessDfDefinitions(rdef$dforigin[i,],fill_dependencies = F))
-    rdef$dforiginsliced <<- t(rdef$dforigin[i,])
-  })
 
   output$ox_clean = DT::renderDataTable({
     rdef$dfclean
   },options = list(pageLength = 100), selection = 'none', editable = FALSE)
 
+
+  output$ox_suggestdf = DT::renderDataTable({
+    rdef$dfsuggest
+  },options = list(pageLength = 100), selection = 'none', editable = FALSE)
+
+
+  output$odfCodesheet.read_v2_lkp <-  DT::renderDataTable({
+    dfCodesheet.read_v2_lkp
+  },options = list(pageLength = 100), selection = 'none', editable = FALSE)
+
+
+  output$odfCodesheet.read_ctv3_lkp <-  DT::renderDataTable({
+    dfCodesheet.read_ctv3_lkp
+  },options = list(pageLength = 100), selection = 'none', editable = FALSE)
+
+
+  #
+  observeEvent(input$oxids_rows_selected,  ignoreInit=TRUE,{
+    i <- input$oxids_rows_selected
+    print(i)
+    #rdef$dfsuggest <<- t(suggestcodes(rdef$dforigin[i,],fill_dependencies = F))
+
+    output$ox = DT::renderDataTable({
+      t(rdef$dforigin[i,])
+    },options = list(pageLength = 100), editable = TRUE, selection='single') #,class = 'nowrap stripe compact',selection = 'none',
+
+    output$ox_clean = DT::renderDataTable({
+      t(rdef$dfclean[i,])
+    },options = list(pageLength = 100), selection = 'none', editable = FALSE)
+
+
+    output$ox_suggestdf = DT::renderDataTable({
+      t(rdef$dfsuggest[i,])
+    },options = list(pageLength = 100), selection = 'none', editable = FALSE)
+
+
+  })
 
 }
 

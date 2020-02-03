@@ -9,7 +9,7 @@ setwd(d)
 roxygen2::roxygenise() # just
 devtools::document() #srouce + compile
 
-detach(name= "CreateUKBiobankPhentoypes", unload=TRUE)
+detach("package:CreateUKBiobankPhentoypes", unload=TRUE)
 rm(dfDefinitions)
 rm(CreateUKBiobankPhentoypes)
 
