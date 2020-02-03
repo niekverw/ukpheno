@@ -357,10 +357,10 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
 
 
     Strcatagory = "GP"
-    if( !is.na(row$BNFCODES)  ) {
+    if( !is.na(row$DMDCODES)  ) {
       #### SETTINGS:
       print("    ..finding READCODES diagnosiscodes")
-      VctCodes<-unlist(strsplit(row$BNFCODES,","))
+      VctCodes<-unlist(strsplit(row$DMDCODES,","))
       ####################################
       ### READ: FOLLOW UP + HISTORY VARIABLES:
       ###
