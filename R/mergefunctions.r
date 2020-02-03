@@ -31,12 +31,14 @@ MultiMergeEpisodeData <- function(filesEpisode,StrTrait,StrDescription,HEScodes,
   # suffix="_HES_"
   print(paste("merging",filesEpisode))
 
-  LstDf = lapply(filesEpisode, function(x){    as.data.frame(read.dta13(x,convert.dates = TRUE))   })
+  LstDf = lapply(filesEpisode, function(x){
+    df <- as.data.frame(read.dta13(x,convert.dates = TRUE))
+    })
   VctDescriptions<-unlist(lapply(LstDf,function(x){ varlabel(x) } ))
   dfVctDescriptions <- unique(cbind(names(VctDescriptions),unname(VctDescriptions)))
 
   dfMerged<-Reduce(function(x,y) {merge(x,y,by="n_eid",all=TRUE)}, LstDf)
-
+  #print(dfMerged)
   ### temporary rename primary cause of death vars: CAD2_DOp_FUn CAD2_DOp_FUd so they are not taken into account in the following loop
   VctTmpColNamesDOp<-names(dfMerged)[ grepl( "_DOp_FUd" , names( dfMerged ) ) | grepl( "_DOp_FUn" , names( dfMerged ) ) ]
   names(dfMerged)[ grepl( "_DOp_FUd" , names( dfMerged ) ) | grepl( "_DOp_FUn" , names( dfMerged ) ) ]<-c("DOpn","DOpd")

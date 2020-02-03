@@ -1,8 +1,8 @@
 Package: CreateUKBiobankPhentoypes
 Type: Package
 Title: CreateUKBiobankPhentoypes
-Version: 0.24
-Date: 2017-07-08
+Version: 0.25
+Date: 2019-02-02
 Authors@R: person("Niek", "Verweij", email = "mail@niekverweij.com", role = c("aut", "cre"))
 Description: Provides framework for creating dichotomous phenotypes in UK Biobank
 License: GNU GPLv3, please contact mail@niekverweij.com>

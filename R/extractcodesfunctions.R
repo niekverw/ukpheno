@@ -10,7 +10,7 @@ Outcome_HES<-function(dfmaster_SQL_merge,StrTrait,StrDescription,VctCodes,epidur
     print(paste(StataOutputFile," ... already exists!, skipping"))
     return(0)
   }
-  print(paste("Outcome_HES , checking HES:",StrTrait,":",StrDescription,"-",StrColumnnameForVisitDate, "--",paste(StrColumnForHescodes,collapse=",") ) )
+  print(paste("extracting outcomes from episode data, checking codes:",StrTrait,":",StrDescription,"-",StrColumnnameForVisitDate, "--",paste(StrColumnForHescodes,collapse=",") ) )
 
   DiagnosisVars=c("n_eid","HXn","HXd","HXt","HXto","FUn","FUd","FUt","FUto") ### variables you wil create and you want to keep later...
   ### FUt/ FUto = NOT FOR GP DATA, only HESIN
@@ -23,10 +23,12 @@ Outcome_HES<-function(dfmaster_SQL_merge,StrTrait,StrDescription,VctCodes,epidur
   ########### GREP CODE AT THE COLUMNS 'StrColumnForHescodes' ;; TODO grep should be ^: paste(sep="","^",VctCodes, collapse='|')
   #grepoper=c()
   #for (i in StrColumnForHescodes ){
-  #  grepoper<-c(grepoper,grep(paste(VctCodes, collapse='|'), dfmaster_SQL_merge_tmp[,i], ignore.case=TRUE))
+  #  grepoper<-c(grepoper,grep(paste(VctCodes, collapse='|'), dfmaster_SQL_merge_tmp[,i], ignore.case=FALSE))
   #}
   if (length(StrColumnForHescodes)==1){StrColumnForHescodes = c(StrColumnForHescodes,StrColumnForHescodes)}
-  grepoper <-unlist( mclapply(  dfmaster_SQL_merge_tmp[, c(StrColumnForHescodes,StrColumnForHescodes)], function(col) grep(paste(sep="","^",VctCodes, collapse='|'), col, ignore.case=TRUE),mc.cores =detectCores()/2 ) ) ## PARALLEL of the above.
+  grepoper <-unlist( mclapply(  dfmaster_SQL_merge_tmp[, c(StrColumnForHescodes,StrColumnForHescodes)], function(col) grep(paste(sep="","^",VctCodes, collapse='|'), col, ignore.case=FALSE),mc.cores =detectCores()/2 ) ) ## PARALLEL of the above.
+
+  if(length(grepoper) ==0) {print("    nothing here");return(0) }
 
   dfmaster_SQL_merge_oper     <-dfmaster_SQL_merge_tmp[ unique(c(grepoper)),]
   ## filter Episode Durations on a minimum duration beforehand
@@ -74,6 +76,8 @@ Outcome_HES<-function(dfmaster_SQL_merge,StrTrait,StrDescription,VctCodes,epidur
   ## keep uniq
   dfmaster_SQL_merge_oper <- dfmaster_SQL_merge_oper[!duplicated(dfmaster_SQL_merge_oper[,DiagnosisVars]),][,DiagnosisVars] ## FILTER UNIQ + KEEP ONLY COLUMNS NEEDED.
 
+  print(paste("   #found ",nrow(dfmaster_SQL_merge_oper) ))
+
   ### ADD DESCRIPTION // RENAME VARIABLES
   attr(dfmaster_SQL_merge_oper, "var.labels") <- c("Identifier",paste(StrDescription, colnames(dfmaster_SQL_merge_oper[,-1]), sep = " - ") )
   attr(dfmaster_SQL_merge_oper, "var.labels")<-substr(attr(dfmaster_SQL_merge_oper, "var.labels"),0,80)
@@ -94,8 +98,8 @@ Death_Masterset<-function(dfmaster_TSDEATHMEDICD10_visitdtonly,StrTrait,StrDescr
   StrColumnNames<-names(dfmaster_TSDEATHMEDICD10_visitdtonly[ grepl(StrFieldcode, names(dfmaster_TSDEATHMEDICD10_visitdtonly))])
   #grepoper=c()
   #for (i in StrColumnNames )
-  #  grepoper<-c(grepoper,grep(paste(VctCodes, collapse='|'), dfmaster_TSDEATHMEDICD10_visitdtonly[,i], ignore.case=TRUE))
-  grepoper <-unlist( mclapply(  dfmaster_TSDEATHMEDICD10_visitdtonly[, StrColumnNames], function(col) grep(paste(VctCodes, collapse='|'), col, ignore.case=TRUE),mc.cores =detectCores()/2 ) ) ### PARALLEL., the abovve is not parallelized
+  #  grepoper<-c(grepoper,grep(paste(VctCodes, collapse='|'), dfmaster_TSDEATHMEDICD10_visitdtonly[,i], ignore.case=FALSE))
+  grepoper <-unlist( mclapply(  dfmaster_TSDEATHMEDICD10_visitdtonly[, StrColumnNames], function(col) grep(paste(VctCodes, collapse='|'), col, ignore.case=FALSE),mc.cores =detectCores()/2 ) ) ### PARALLEL., the abovve is not parallelized
   dfmaster_TSDEATHMEDICD10_visitdtonly_subset<-dfmaster_TSDEATHMEDICD10_visitdtonly[ unique(c(grepoper)),][c("n_eid",visitdt,StrFieldDateColumn)]
 
   if (is.data.frame(dfmaster_TSDEATHMEDICD10_visitdtonly_subset) && nrow(dfmaster_TSDEATHMEDICD10_visitdtonly_subset)>0){
@@ -169,7 +173,7 @@ Query_Masterset2<-function(dfmaster_TSDEATHMEDICD10_visitdtonly,StrTrait,StrDesc
         #for (code in unlist(strsplit(StrTScodes,split="\\|" )) ){
         #  grepoper<- c(grepoper,which(as.numeric(dfmaster_TSDEATHMEDICD10_visitdtonly[,i])==code))
         #}
-        print(paste("#found ",sum(as.numeric(dfmaster_TSDEATHMEDICD10_visitdtonly[,i]) %in% unlist(strsplit(StrTScodes,split="\\|" )))) )
+        print(paste("   #visit=",visit, "; #Condition=",Condition, "; #i=",i, "; #found ",sum(as.numeric(dfmaster_TSDEATHMEDICD10_visitdtonly[,i]) %in% unlist(strsplit(StrTScodes,split="\\|" )))) )
         grepoper<- c(grepoper,which(as.numeric(dfmaster_TSDEATHMEDICD10_visitdtonly[,i]) %in% unlist(strsplit(StrTScodes,split="\\|" )) ))  ## faster.. but the above is similar to the code below.. should figure out how to merge below with this or something..
       }
     }

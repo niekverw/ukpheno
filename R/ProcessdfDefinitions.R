@@ -36,8 +36,13 @@ CheckDuplicateTRAITS<-function(df){
 
 
 #' @export
-PreProcessDfDefinitions<-function(df,VctAllColumns){
+PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=c("ICD10CODES","ICD9CODES","OPERCODES")){
 ## df<-dfDefinitions
+  # check if nrows==1
+  check=0
+  if(nrow(df)==1){df<-rbind(df,df);check=1}
+
+
   ## for the names: remove everything between dots (R converts symbols to dots "(,.-)/" etc )
   names(df)<-gsub( " *\\..*?\\. *", "", names(df) )
   ## add missing columns
@@ -53,7 +58,10 @@ PreProcessDfDefinitions<-function(df,VctAllColumns){
   trim.commas <- function (x) gsub("(?<=[\\,])\\,*|^\\,+|\\,+$", "", x, perl=TRUE)
   df[,VctAllColumns]<- data.frame(apply(df[,VctAllColumns],2,function(x) trim.commas(x)))
 
+  df[,VctColstoupper] <- apply(df[,VctColstoupper],2,toupper)
   df<-ConvertFactorsToStringReplaceNAInDf(df) #### CONVERT FACTOR TO STRING
+
+  if(check==1){df<-df[1,]}
 
   return(df)
 }
@@ -62,7 +70,7 @@ PreProcessDfDefinitions<-function(df,VctAllColumns){
 FillInSRdefinitions<-function(df,Var="SR",cols=c("n_20001_","n_20002_","n_20004_") ) {
   ## fill in SR
   df[,Var]<-as.character(df[,Var])
-  df[is.na( as.character(df[,Var])) ,][,Var] <- ""
+  try(df[is.na( as.character(df[,Var])) ,][,Var] <- "",silent = T)
 
  # df [ is.na(as.character( df[,Var] )) %in% "NA"  ,]
 
@@ -140,7 +148,7 @@ ReduceRedundancyDf<- function(df){ ### NOT really nessesary
 #' #
 #' #
 #' #
-#' VctAllColumns<-  c("TS", "SR", "TS_RX", "SR_RX", "LAB", "ICD10CODES", "ICD9CODES", "OPERCODES", "TS_AGE_DIAG_COLNAME", "READCODES", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
+#' VctAllColumns<-  c("TS", "SR", "TS_RX", "SR_RX", "LAB", "ICD10CODES", "ICD9CODES", "OPERCODES", "TS_AGE_DIAG_COLNAME", "READCODES","CTV3CODES","BNFCODES","DMDCODES", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
 #' ProcessDfDefinitions(dfDefinitions,VctAllColumns)
 #'
 #' @export
@@ -148,24 +156,38 @@ ProcessDfDefinitions<-function(df,
                                VctAllColumns=c("TS", "SR", "TS_RX", "SR_RX", "LAB",
                                                "ICD10CODES", "ICD9CODES", "OPERCODES",
                                                "TS_AGE_DIAG_COLNAME",
-                                               "READCODES", "CTV3",
-                                               "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")){
- # wb <- loadWorkbook(dfDefinitions_file)
- # df<- dfDefinitions  #  df<- dfDefinitions2
+                                               "READCODES", "CTV3CODES",
+                                               "BNFCODES","DMDCODES",
+                                               "n_20001_",    "n_20002_", "n_20003_", "n_20004_",
+                                               "DEPENDENCY"),
+                               fill_dependencies=T){
+  # df<- dfDefinitions  #  df<- dfDefinitions2
   # VctAllColumns<-  c("TS", "SR", "TS_RX", "SR_RX", "LAB", "ICD10CODES", "ICD9CODES", "OPERCODES", "TS_AGE_DIAG_COLNAME", "READCODES","CTV3", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
 
-  if(nrow(df)==1 ) {stop("please have more than 1 phenotype definition.")} ## check if excel file has more than 1 row.
-  df<-PreProcessDfDefinitions(df,VctAllColumns)
+  #if(nrow(df)==1 ) {stop("please have more than 1 phenotype definition.")} ## check if excel file has more than 1 row.
+
+  df<-PreProcessDfDefinitions(df,VctAllColumns,toupper=c("ICD10CODES","ICD9CODES","OPERCODES"))
   #################################
-  ### FILL SR fields with  _2000X_ 'helper' columns;
-  df<-FillInSRdefinitions(df,"SR",c("n_20001_","n_20002_","n_20004_"))
+  CheckDuplicateTRAITS(df) # check duplicateids.
+  ### df = excel matrix. 1 hij loopt een voor een over elke rij heen,
+  # 2 zoekt per dependency in die rij de bijpassende rijen voor elke dependency  erbij en plakt die naast elkaar (inclusief de dependencies van de dependencies).
+  # 4) dan delete hij de depenencies die hij ingevuld heeft # dit op repeat tot dat er geen dependencies meer zijn en alles is ingevuld.
+  if(fill_dependencies==F){return(return(ConvertFactorsToStringReplaceNAInDf(df)))}
+  #################################
+  ### HELPER FUNCTION TO CROSS CHECK EVERYTHING AND LOOKUPS, SHOULD GET A SEPERATE FUNCTION OUTSIDE OF EVERYTHING.
+  #################################
   ###[unsupported] LOOKUP NAMES OF MEDICATION and put UKBIO.CODES in RX
   # df$n_20003_<- paste(df$n_20003_, unlist(lapply( df$n_20003_, CovertMednamesToUkbcoding)))
   # df<-FillInSRdefinitions(df,"SR_RX",c("n_20003_"))
-
   ### LOOKUP READ.CODES and put UKBIO.CODES in SR_RX
   df$n_20003_ <- paste(df$n_20003_, unlist(lapply( df$READCODES, CovertReadcodesToSelfReportedUkbCoding)),sep=",")
   df$n_20003_ <- unlist(lapply(df$n_20003_,function(x) {  x = unique(strsplit(x,"," )[[1]]); if(length(x)==1 & x[1] =="NA"){ return("NA")} else{ return( paste(x[x != "NA"],collapse=",") )} }))
+
+
+  #################################
+  ### FILL SR fields with  _2000X_ 'helper' columns;
+  #################################
+  df<-FillInSRdefinitions(df,"SR",c("n_20001_","n_20002_","n_20004_"))
   df<-FillInSRdefinitions(df,"SR_RX",c("n_20003_"))
   df[,c("n_20001_","n_20002_","n_20004_","n_20003_")] <- NA
   VctAllColumns <- VctAllColumns[!VctAllColumns %in% c("n_20001_","n_20002_","n_20004_","n_20003_")]
@@ -173,11 +195,7 @@ ProcessDfDefinitions<-function(df,
   ### lookup ICD10/9/OPER and put into READCODES and CTV3:
   # ....? I can lookup everything in everything to make everything more complete
 
-  #################################
-  CheckDuplicateTRAITS(df) # check duplicateids.
-  ### df = excel matrix. 1 hij loopt een voor een over elke rij heen,
-  # 2 zoekt per dependency in die rij de bijpassende rijen voor elke dependency  erbij en plakt die naast elkaar (inclusief de dependencies van de dependencies).
-  # 4) dan delete hij de depenencies die hij ingevuld heeft # dit op repeat tot dat er geen dependencies meer zijn en alles is ingevuld.
+
   repeat {
     for(i in 1:nrow(df)) {
       row <- df[i,]
@@ -211,8 +229,8 @@ ProcessDfDefinitions<-function(df,
     }
     if( length(unique(is.na(df$DEPENDENCY)))==1 ) break
   }
-  df<-ConvertFactorsToStringReplaceNAInDf(df)
-  return(df)
+
+  return(ConvertFactorsToStringReplaceNAInDf(df))
 
   #write.table(df,paste(dfDefinitions_file,".processed.tsv",sep=""),quote = FALSE,row.names = FALSE,sep="\t")
 }

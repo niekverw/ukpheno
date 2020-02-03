@@ -28,30 +28,55 @@ library(CreateUKBiobankPhentoypes)
 library(readstata13) # make sure to install latest github version
 library(data.table)
 
+# set paths to data sources
 UKbioDataset_file = "/path/to/file.dta"
 hesin_file="/path/to/hesin_2018-04-17.tsv"
 hesin_diagicd10_file="/path/to/hesin_diagicd10_2018-04-17.tsv"
 hesin_diagicd9_file="/path/to/hesin_diagicd9_2018-04-17.tsv"
 hesin_oper_file="/path/to/hesin_oper4_2018-04-17.tsv"
+gp_clinical_file = "pathto/gpclinical.txt"
+gp_scripts_file = "pathto/gpscripts.txt"
+
 dfDefinitions_file = "/path/to/https://github.com/niekverw/ukpheno/blob/master/data/dfDefinitions.tsv"
 Outputdir="/path/to/output"
 
+
+# load data 
 print("load definition table")
 dfDefinitions = data.frame(fread(dfDefinitions_file))
 write.table(ProcessDfDefinitions(dfDefinitions),paste(dfDefinitions_file,".check.tsv",sep=""),sep="\t",quote=FALSE,row.names = FALSE) # used to debug your definitions.
 print("load dataframe ukbiobank")
 UKbioDataset <-  as.data.frame(read.dta13(UKbioDataset_file,convert.dates = TRUE,convert.factors=F))
+
+# names(UKbioDataset)[grepl('^s_',names(UKbioDataset) )] <- paste0("t",names(UKbioDataset)[grepl('^s_',names(UKbioDataset) )])
+# UKbioDataset$ts_53_0_0 =  as.Date(UKbioDataset$ts_53_0_0, "%d%b%Y")
+# UKbioDataset$ts_53_1_0 =  as.Date(UKbioDataset$ts_53_1_0, "%d%b%Y")
+# UKbioDataset$ts_53_2_0 =  as.Date(UKbioDataset$ts_53_2_0, "%d%b%Y")
+# UKbioDataset$ts_40000_0_0 =  as.Date(UKbioDataset$ts_40000_0_0, "%d%b%Y")
+
 print("load hesin")
 dfhesintables<-LoadHesinTable(UKbioDataset,hesin_file,hesin_diagicd10_file,hesin_diagicd9_file,hesin_oper_file)
 
+
+dfgpclinical <- loadGPTable(UKbioDataset,gp_clinical_file, 
+                            cols_tokeep=c("eid","event_dt","read_2","read_3"),
+                            cols_rename=c("n_eid","event_dt","read_2","read_3"))
+
+dfgpscripts <- loadGPTable(UKbioDataset,gp_scripts_file, 
+                            cols_tokeep=c("eid","issue_date","bnf_code","dmd_code"),
+                            cols_rename=c("n_eid","event_dt","bnf_code","dmd_code"))
+
+
+# pull out the data. 
 print("constructing diagnoses for baseline visit. 
 CreateUKBiobankPhentoypes(Nvisits=3,
                           visitreference=0,
                           UKbioDataset,
                           dfhesintables,
+                          dfgpclinical,dfgpscripts,
                           dfDefinitions,
                           Outputdir,
-                          VctOutputIndividualColumns=c("TS","SR","TS_RX","RX","LAB")
+                          VctOutputIndividualColumns=c("TS","SR","TS_RX","SR_RX")
                           )
 ```
 

@@ -68,7 +68,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
   #### DEFINE COLUMNS
   VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","SR_RX","LAB") #set this variable to a selection of columns (dfDefinition columns) to be outputted by the _UKBV variable, default is 'VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","SR_RX","LAB")'
   VctAllHESINDefinitionColumns=c("ICD10CODES","ICD9CODES","OPERCODES")
-  VctGPColumns=c("CTV3","READCODES")
+  VctGPColumns=c("READCODES","CTV3CODES","BNFCODES","DMDCODES")
   StrTSAgeColumn="TS_AGE_DIAG_COLNAME"
   StrSRcolumns<-c("n_20001_","n_20002_","n_20003_","n_20004_")
   VctAllColumns=c("DEPENDENCY",VctAllUKBVDefinitionColumns,VctAllHESINDefinitionColumns,VctGPColumns,StrTSAgeColumn,StrSRcolumns)
@@ -276,10 +276,10 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
 
 
     ########################################################
-    ####### READ CODES (V2 + V3): GP DATA; CTV3, READCODES
+    ####### READ CODES (V2 + V3): GP DATA; CTV3CODES, READCODES
     ########################################################
     Strcatagory = "GP"
-    if( !is.na(row$READCODES) | !is.na(row$CTV3) ) {
+    if( !is.na(row$READCODES)  ) {
       #### SETTINGS:
       print("    ..finding READCODES diagnosiscodes")
       VctCodes<-unlist(strsplit(row$READCODES,","))
@@ -287,7 +287,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
       ### READ: FOLLOW UP + HISTORY VARIABLES:
       ###
       StrName="Read"
-      StrColumnForHescodes<-c("read_2","read_3" )
+      StrColumnForHescodes<-c("read_2")
       StrColumnnameForEventDate<-"event_dt"
       StrDescription<-paste(row$DESCRIPTION,"- READ -",paste(VctCodes,collapse=","))
       StrColumnnameForVisitDate<-visitdt
@@ -303,6 +303,83 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
 
     }
 
+    Strcatagory = "GP"
+    if( !is.na(row$CTV3CODES)  ) {
+      #### SETTINGS:
+      print("    ..finding READCODES diagnosiscodes")
+      VctCodes<-unlist(strsplit(row$CTV3CODES,","))
+      ####################################
+      ### READ: FOLLOW UP + HISTORY VARIABLES:
+      ###
+      StrName="CTV3"
+      StrColumnForHescodes<-c("read_3")
+      StrColumnnameForEventDate<-"event_dt"
+      StrDescription<-paste(row$DESCRIPTION,"- CTV3 -",paste(VctCodes,collapse=","))
+      StrColumnnameForVisitDate<-visitdt
+
+      dir.create( paste( Outputdir,"/",visitdt,"/",Strcatagory,sep=""), showWarnings =F,recursive=T)
+      StataOutputFile= paste(Outputdir,"/",visitdt,"/",Strcatagory,"/",paste(StrTrait,StrName,sep="_"),".dta",sep="")
+      # fix epiend_1 is not available in GP, so added it to the dataframe.. but it is not useful here.
+      dir.create( paste( Outputdir,"/",visitdt,"/",Strcatagory,sep=""), showWarnings =F,recursive=T)
+      Outcome_HES(dfmaster_SQL_merge = dfgpclinical,
+                  StrTrait = paste(StrTrait,StrName,sep="_"),
+                  StrDescription,VctCodes,epidurfilter,
+                  StrColumnForHescodes,StrColumnnameForEventDate,StrColumnnameForVisitDate,StataOutputFile)
+
+    }
+    ########################################################
+    ####### MEDICATION FROM READCODES +  DMDCODES + BNFCODES
+    ########################################################
+    Strcatagory = "GP"
+    if( !is.na(row$BNFCODES)  ) {
+      #### SETTINGS:
+      print("    ..finding READCODES diagnosiscodes")
+      VctCodes<-unlist(strsplit(row$BNFCODES,","))
+      ####################################
+      ### READ: FOLLOW UP + HISTORY VARIABLES:
+      ###
+      StrName="BNF"
+      StrColumnForHescodes<-c("bnf_code")
+      StrColumnnameForEventDate<-"event_dt"
+      StrDescription<-paste(row$DESCRIPTION,"- BNF -",paste(VctCodes,collapse=","))
+      StrColumnnameForVisitDate<-visitdt
+
+      dir.create( paste( Outputdir,"/",visitdt,"/",Strcatagory,sep=""), showWarnings =F,recursive=T)
+      StataOutputFile= paste(Outputdir,"/",visitdt,"/",Strcatagory,"/",paste(StrTrait,StrName,sep="_"),".dta",sep="")
+      # fix epiend_1 is not available in GP, so added it to the dataframe.. but it is not useful here.
+      dir.create( paste( Outputdir,"/",visitdt,"/",Strcatagory,sep=""), showWarnings =F,recursive=T)
+      Outcome_HES(dfmaster_SQL_merge = dfgpclinical,
+                  StrTrait = paste(StrTrait,StrName,sep="_"),
+                  StrDescription,VctCodes,epidurfilter,
+                  StrColumnForHescodes,StrColumnnameForEventDate,StrColumnnameForVisitDate,StataOutputFile)
+
+    }
+
+
+    Strcatagory = "GP"
+    if( !is.na(row$BNFCODES)  ) {
+      #### SETTINGS:
+      print("    ..finding READCODES diagnosiscodes")
+      VctCodes<-unlist(strsplit(row$BNFCODES,","))
+      ####################################
+      ### READ: FOLLOW UP + HISTORY VARIABLES:
+      ###
+      StrName="DMD"
+      StrColumnForHescodes<-c("dmd_code")
+      StrColumnnameForEventDate<-"event_dt"
+      StrDescription<-paste(row$DESCRIPTION,"- DMD -",paste(VctCodes,collapse=","))
+      StrColumnnameForVisitDate<-visitdt
+
+      dir.create( paste( Outputdir,"/",visitdt,"/",Strcatagory,sep=""), showWarnings =F,recursive=T)
+      StataOutputFile= paste(Outputdir,"/",visitdt,"/",Strcatagory,"/",paste(StrTrait,StrName,sep="_"),".dta",sep="")
+      # fix epiend_1 is not available in GP, so added it to the dataframe.. but it is not useful here.
+      dir.create( paste( Outputdir,"/",visitdt,"/",Strcatagory,sep=""), showWarnings =F,recursive=T)
+      Outcome_HES(dfmaster_SQL_merge = dfgpclinical,
+                  StrTrait = paste(StrTrait,StrName,sep="_"),
+                  StrDescription,VctCodes,epidurfilter,
+                  StrColumnForHescodes,StrColumnnameForEventDate,StrColumnnameForVisitDate,StataOutputFile)
+
+    }
     ##########################################
     ### MERGING Files:
     ##########################################
@@ -311,7 +388,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
       ###### MERGING ICD10/9 and death follow up.
       ##########################################
     print(visitdt)
-    filesEpisode<-list.files(path=paste(Outputdir,"/",visitdt,"/HESIN",sep=""),pattern=paste("^",StrTrait,"(_)(.*)dta$",sep=""), full.names=TRUE)
+    filesEpisode<-list.files(path=paste(Outputdir,"/",visitdt,"/HESIN",sep=""),pattern=paste("^",StrTrait,"(_)(.*)dta$",sep=""), full.names=TRUE,recursive = F)
     if( length(filesEpisode)>0) {
       HEScodes=paste(row$ICD10CODES,row$ICD9CODES,row$OPERCODES,sep="|")
       OutputdirMerged=paste(Outputdir,"/",visitdt,"/HESIN/merged/",sep="")
@@ -325,19 +402,35 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
       if(is.data.frame(dfMerged)){      save.dta13(dfMerged,StataOutputFile,compress = TRUE) }
       }
     }
+
       ##########################################
-      ## > TODO?  MERGING all scripts + clinical?
+      ## > TODO MERGE ALL GP data
       ##########################################
 
+    print(visitdt)
+    filesEpisode<-list.files(path=paste(Outputdir,"/",visitdt,"/GP",sep=""),pattern=paste("^",StrTrait,"(_)(.*)dta$",sep=""), full.names=TRUE,recursive = F)
+    if( length(filesEpisode)>0) {
+      HEScodes=paste(row$READCODES,row$CTV3CODES,row$BNFCODES,row$BNFCODES,row$DMDCODES,sep="|")
+      OutputdirMerged=paste(Outputdir,"/",visitdt,"/GP/merged/",sep="")
+      StataOutputFile=paste(OutputdirMerged,"/",StrTrait,"_merged.dta",sep="")
+
+      if( file.exists(StataOutputFile )) {### CHECK IF FILE EXISTS:
+        print(paste(StataOutputFile," ... already exists!, skipping"))
+      } else {
+        dfMerged<-MultiMergeEpisodeData(filesEpisode,StrTrait,row$DESCRIPTION,HEScodes)
+        dir.create(OutputdirMerged, showWarnings = FALSE, recursive = TRUE)
+        if(is.data.frame(dfMerged)){      save.dta13(dfMerged,StataOutputFile,compress = TRUE) }
+      }
+    }
       ##########################################
       ###### MERGING ALL EPISODE DATA
       ##########################################
     print(visitdt)
-    filesEpisode<-list.files(path=paste(Outputdir,"/",visitdt,"/HESIN",sep=""),pattern=paste("^",StrTrait,"(_)(.*)dta$",sep=""), full.names=TRUE)
-    filesEpisode<-c(filesEpisode,list.files(path=paste(Outputdir,"/",visitdt,"/GP",sep=""),pattern=paste("^",StrTrait,"(_)(.*)dta$",sep=""), full.names=TRUE))
+    filesEpisode<-list.files(path=paste(Outputdir,"/",visitdt,"/HESIN",sep=""),pattern=paste("^",StrTrait,"(_)(.*)dta$",sep=""), full.names=TRUE,recursive = F)
+    filesEpisode<-c(filesEpisode,list.files(path=paste(Outputdir,"/",visitdt,"/GP",sep=""),pattern=paste("^",StrTrait,"(_)(.*)dta$",sep=""), full.names=TRUE,recursive = F))
 
     if( length(filesEpisode)>0) {
-      EPcodes=paste(row$ICD10CODES,row$ICD9CODES,row$OPERCODES,row$READCODES,row$CTV3,sep="|")
+      EPcodes=paste(row$ICD10CODES,row$ICD9CODES,row$OPERCODES,row$READCODES,row$CTV3CODES,row$BNFCODES,row$DMDCODES,sep="|")
       OutputdirMerged=paste(Outputdir,"/",visitdt,"/ALL/Episodes/",sep="")
       dir.create(OutputdirMerged, showWarnings = FALSE, recursive = TRUE)
       StataOutputFile=paste(OutputdirMerged,"/",StrTrait,"_merged.dta",sep="")
@@ -375,6 +468,17 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
 
   }
 
+  ## summarize sources (death, hesin, gp (read), self reports from nurse (SR), touchscreen (TS) )
+  df_phenotype_crosstabulation <- summarize_cross_phenotype_fields(paste0(Outputdir,"/",visitdt),UKbioDataset$n_eid) #dfmaster_TSDEATHMEDICD10_visitdtonly
+  fwrite(df_phenotype_crosstabulation,f=paste0(Outputdir,"/",visitdt,"/crosstabulation.tsv"),row.names = F,sep = "\t")
+
+  # merge traits
+  merge_stata_files(statafiles = list.files(paste0(Outputdir,"/",visitdt,"/ALL/"),full.names = T,pattern = "*.dta$" ),paste0(Outputdir,"/",visitdt,"/ALL.dta"))
+
+
+
 }
+
+
 
 
