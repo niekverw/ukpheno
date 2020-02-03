@@ -20,6 +20,7 @@ Used in:
 
 - 1 datatable of UK Bioank in standard STATA format 
 - 4 tables containing hospital records of 1) Primary ICD10 diagnoses, 2) Secondary ICD10, 3) ICD9 and 4) OPERATION CODES. 
+- 2 tables containing hospital primary care data, 1) clinical, 2)scripts. 
 - 1 table containing the diagnoses: example https://github.com/niekverw/ukpheno/blob/master/data/dfDefinitions.tsv
 
 ## example:
