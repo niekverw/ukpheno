@@ -30,11 +30,21 @@ library(readstata13) # make sure to install latest github version
 library(data.table)
 
 # set paths to data sources
+# ukbiobank main dataset, converted to stata using standard scripts provided by UKB
 UKbioDataset_file = "/path/to/file.dta"
-hesin_file="/path/to/hesin_2018-04-17.tsv"
-hesin_diagicd10_file="/path/to/hesin_diagicd10_2018-04-17.tsv"
-hesin_diagicd9_file="/path/to/hesin_diagicd9_2018-04-17.tsv"
-hesin_oper_file="/path/to/hesin_oper4_2018-04-17.tsv"
+
+# v1 hesin tables (can be loaded using LoadHesinTable (depricated, but still working)
+# hesin_file="/path/to/hesin_2018-04-17.tsv"
+# hesin_diagicd10_file="/path/to/hesin_diagicd10_2018-04-17.tsv"
+# hesin_diagicd9_file="/path/to/hesin_diagicd9_2018-04-17.tsv"
+# hesin_oper_file="/path/to/hesin_oper4_2018-04-17.tsv"
+
+# v2 hesin tables (current)
+fhesin <- "/data/scratch/project/medicinal_graphology/hes_tables/hesin.txt"
+fhesin_oper <- "/data/scratch/project/medicinal_graphology/hes_tables/hesin_oper.txt"
+fhesin_diag <- "/data/scratch/project/medicinal_graphology/hes_tables/hesin_diag.txt"
+
+
 gp_clinical_file = "pathto/gpclinical.txt"
 gp_scripts_file = "pathto/gpscripts.txt"
 
@@ -45,7 +55,8 @@ Outputdir="/path/to/output"
 # load data 
 print("load definition table")
 dfDefinitions = data.frame(fread(dfDefinitions_file))
-write.table(ProcessDfDefinitions(dfDefinitions),paste(dfDefinitions_file,".check.tsv",sep=""),sep="\t",quote=FALSE,row.names = FALSE) # used to debug your definitions.
+# paste(c("n_eid",sapply(get_allvarnames(dfDefinitions_processed),function(x) paste0("*_",x,"_*"))),collapse=" ")
+# write.table(ProcessDfDefinitions(dfDefinitions),paste(dfDefinitions_file,".check.tsv",sep=""),sep="\t",quote=FALSE,row.names = FALSE) # used to debug your definitions.
 print("load dataframe ukbiobank")
 UKbioDataset <-  as.data.frame(read.dta13(UKbioDataset_file,convert.dates = TRUE,convert.factors=F))
 
@@ -56,8 +67,7 @@ UKbioDataset <-  as.data.frame(read.dta13(UKbioDataset_file,convert.dates = TRUE
 # UKbioDataset$ts_40000_0_0 =  as.Date(UKbioDataset$ts_40000_0_0, "%d%b%Y")
 
 print("load hesin")
-dfhesintables<-LoadHesinTable(UKbioDataset,hesin_file,hesin_diagicd10_file,hesin_diagicd9_file,hesin_oper_file)
-
+dfhesintables <- LoadHesinTable_v2(UKbioDataset,fhesin,fhesin_diag,fhesin_oper)
 
 dfgpclinical <- loadGPTable(UKbioDataset,gp_clinical_file, 
                             cols_tokeep=c("eid","event_dt","read_2","read_3"),
