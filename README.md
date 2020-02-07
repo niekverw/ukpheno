@@ -40,9 +40,9 @@ UKbioDataset_file = "/path/to/file.dta"
 # hesin_oper_file="/path/to/hesin_oper4_2018-04-17.tsv"
 
 # v2 hesin tables (current)
-fhesin <- "/data/scratch/project/medicinal_graphology/hes_tables/hesin.txt"
-fhesin_oper <- "/data/scratch/project/medicinal_graphology/hes_tables/hesin_oper.txt"
-fhesin_diag <- "/data/scratch/project/medicinal_graphology/hes_tables/hesin_diag.txt"
+fhesin <- "hesin.txt"
+fhesin_oper <- "hesin_oper.txt"
+fhesin_diag <- "hesin_diag.txt"
 
 
 gp_clinical_file = "pathto/gpclinical.txt"
