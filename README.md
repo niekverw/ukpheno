@@ -30,7 +30,7 @@ library(readstata13) # make sure to install latest github version
 library(data.table)
 
 # set paths to data sources
-# ukbiobank main dataset, converted to stata using standard scripts provided by UKB
+# ukbiobank main dataset, converted to stata using standard scripts provided by UKB, possibly filter it down to smaller file size.
 UKbioDataset_file = "/path/to/file.dta"
 
 # v1 hesin tables (can be loaded using LoadHesinTable (depricated, but still working)
@@ -55,7 +55,8 @@ Outputdir="/path/to/output"
 # load data 
 print("load definition table")
 dfDefinitions = data.frame(fread(dfDefinitions_file))
-# paste(c("n_eid",sapply(get_allvarnames(dfDefinitions_processed),function(x) paste0("*_",x,"_*"))),collapse=" ")
+dfDefinitions_processed <- ProcessDfDefinitions(dfDefinitions)
+# paste(c("n_eid",sapply(get_allvarnames(dfDefinitions_processed),function(x) paste0("*_",x,"_*"))),collapse=" ") 
 # write.table(ProcessDfDefinitions(dfDefinitions),paste(dfDefinitions_file,".check.tsv",sep=""),sep="\t",quote=FALSE,row.names = FALSE) # used to debug your definitions.
 print("load dataframe ukbiobank")
 UKbioDataset <-  as.data.frame(read.dta13(UKbioDataset_file,convert.dates = TRUE,convert.factors=F))
