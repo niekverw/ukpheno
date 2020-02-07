@@ -85,3 +85,84 @@ loadGPTable <- function(UKbioDataset,
   # hist( dfgp$event_dt, "years", freq = TRUE,bars=100)
   return(dfgp)
 }
+
+#' LoadHesinTable_v2, v2 of uk biobank in hospital tables
+#'
+#' Combining Hesin tables for analyses by CreateUKBiobankPhentoypes()
+#'
+#' @name LoadHesinTable_v2
+#' @param dfUKbioDataset Dataframe:The main UKBiobank dataset, currently only STATA files are allowed that are processed using the ukb_conv tool. Load with as.data.frame(read.dta13(file,convert.dates = TRUE))
+#' @param fhesin containing tsv file hes records
+#' @param fhesin_diag tsv file containing data on secondary ICD10/ICD9 codes
+#' @param fhesin_oper tsv file containing data on secondary OPCS codes
+#' @keywords LoadHesinTable_v2
+#' @export
+#' @examples
+#'
+#'
+LoadHesinTable_v2 <- function(UKbioDataset,fhesin, fhesin_diag,fhesin_oper){
+
+  # read.
+  dfhesin <- data.frame(fread(fhesin,header=T,sep="\t", stringsAsFactors=FALSE, na.strings=""))
+  dfhesin_diag <- data.frame(fread(fhesin_diag,header=T,sep="\t", stringsAsFactors=FALSE, na.strings=""))
+  dfhesin_oper <- data.frame(fread(fhesin_oper,header=T,sep="\t", stringsAsFactors=FALSE, na.strings=""))
+
+  # c("eid", "ins_index", "dsource", "source", "epistart", "epiend",
+  #   "epidur", "bedyear", "epistat", "epitype", "epiorder", "spell_index",
+  #   "spell_seq", "spelbgin", "spelend", "speldur", "pctcode", "gpprpct",
+  #   "category", "elecdate", "elecdur", "admidate", "admimeth_uni",
+  #   "admimeth", "admisorc_uni", "admisorc", "firstreg", "classpat_uni",
+  #   "classpat", "intmanag_uni", "intmanag", "mainspef_uni", "mainspef",
+  #   "tretspef_uni", "tretspef", "operstat", "disdate", "dismeth_uni",
+  #   "dismeth", "disdest_uni", "disdest", "carersi")
+  #dfhesin[dfhesin$source==10,]
+
+  dfhesin <- dfhesin[,c("eid", "ins_index", "dsource", "source", "epistart", "epiend", "admidate",  "disdate")]
+  dfhesin_diag<- dfhesin_diag[,c("eid", "ins_index", "arr_index", "level", "diag_icd9","diag_icd10")] # c("eid", "ins_index", "arr_index", "level", "diag_icd9", "diag_icd9_nb","diag_icd10", "diag_icd10_nb")
+  dfhesin_oper<- dfhesin_oper[,c("eid", "ins_index", "arr_index", "level", "opdate", "oper3", "oper4")] # c("eid", "ins_index", "arr_index", "level", "opdate", "oper3", "oper3_nb", "oper4", "oper4_nb", "posopdur", "preopdur")
+  print("merging hesin + diagnosis, please wait..")
+  dfhes <- merge(dfhesin,dfhesin_diag,by = c("eid","ins_index"))
+  print("merging hesin + operation, please wait..")
+  dfhes <- merge(dfhes,dfhesin_oper,by = c("eid","ins_index","arr_index"),all=T)
+
+  # convert dates
+  dfhes$epistart <- as.Date(as.character(dfhes$epistart),format="%Y%m%d")
+  dfhes$epiend <- as.Date(as.character(dfhes$epiend),format="%Y%m%d")
+  dfhes$admidate <- as.Date(as.character(dfhes$admidate),format="%Y%m%d")
+  dfhes$disdate <- as.Date(as.character(dfhes$disdate),format="%Y%m%d")
+  dfhes$opdate <- as.Date(as.character(dfhes$opdate),format="%d/%m/%Y")
+
+  dfhes[is.na(dfhes$epistart),"epistart"] <- dfhes[is.na(dfhes$epistart),"admidate"]
+  dfhes[is.na(dfhes$epistart),"epiend"] <- dfhes[is.na(dfhes$epistart),"disdate"]
+  dfhes[is.na(dfhes$epistart),"epistart"] <- dfhes[is.na(dfhes$epistart),"opdate"]
+  dfhes[is.na(dfhes$opdate),"opdate"] <- dfhes[is.na(dfhes$opdate),"epistart"]
+  dfhes<- dfhes[!is.na(dfhes$epistart),]
+
+  dfhes$level <- rowMins(as.matrix(dfhes[,c("level.x","level.y")]),na.rm = T)
+  print("merging ukb dates + hesin, please wait..")
+  UKbioDataset_subset<-UKbioDataset[c("n_eid",names(UKbioDataset[grepl("ts_53_",names(UKbioDataset))]))]
+  dfhes<-merge(dfhes,UKbioDataset_subset,by.x = "eid",by.y = "n_eid")
+  dfhes <- data.frame(dfhes)
+
+  names(dfhes)[which(names(dfhes) %in% c("eid","epistart","epiend","diag_icd9","diag_icd10","opdate","oper3" ,"oper4"    ))] <- c("n_eid",'epistart_1',"epiend_1","diag_icd9_1","diag_icd10_1","opdate_1","oper3_1" ,"oper4_1" )
+
+  dfhes$diag_icd9_2 <- dfhes$diag_icd9_1
+  dfhes[dfhes$level==2,"diag_icd9_1"] <- NA # consistent with Version 1 of the data, not very elegant...but too lazy to change everything, and since I  should recode everything there is no point..
+  dfhes[dfhes$level==1,"diag_icd9_2"] <- NA
+
+  dfhes$diag_icd10_2 <- dfhes$diag_icd10_1
+  dfhes[dfhes$level==2,"diag_icd10_1"] <- NA
+  dfhes[dfhes$level==1,"diag_icd10_2"] <- NA
+
+  dfhes$oper3_2 <- dfhes$oper3_1
+  dfhes[dfhes$level==2,"oper3_1"] <- NA
+  dfhes[dfhes$level==1,"oper3_2"] <- NA
+
+  dfhes$oper4_2 <- dfhes$oper4_1
+  dfhes[dfhes$level==2,"oper4_1"] <- NA
+  dfhes[dfhes$level==1,"oper4_2"] <- NA
+
+  return(dfhes)
+
+}
+

@@ -67,7 +67,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
 
   #### DEFINE COLUMNS
   VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","SR_RX","LAB") #set this variable to a selection of columns (dfDefinition columns) to be outputted by the _UKBV variable, default is 'VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","SR_RX","LAB")'
-  VctAllHESINDefinitionColumns=c("ICD10CODES","ICD9CODES","OPERCODES")
+  VctAllHESINDefinitionColumns=c("ICD10CODES","ICD9CODES","OPCS4CODES","OPCS3CODES")
   VctGPColumns=c("READCODES","CTV3CODES","BNFCODES","DMDCODES")
   StrTSAgeColumn="TS_AGE_DIAG_COLNAME"
   StrSRcolumns<-c("n_20001_","n_20002_","n_20003_","n_20004_")
@@ -95,7 +95,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
   dfmaster_TSDEATHMEDICD10_visitdtonly<-UKbioDataset
 
   # running a test on cholesterol Touchscreen, shouldnt be characters..
-  if(nchar(as.character(unique(dfmaster_TSDEATHMEDICD10_visitdtonly[,"n_6153_0_0"]))[2])>2){print("ERROR: be aware that column entries are text, convert to numbers, defactor.."); return(0)}
+  #if(nchar(as.character(unique(dfmaster_TSDEATHMEDICD10_visitdtonly[,"n_6153_0_0"]))[2])>2){print("ERROR: be aware that column entries are text, convert to numbers, defactor.."); return(0)}
 
   print("checking definitions; for(i in 1:nrow(dfDefinitions))")
   for(i in 1:nrow(dfDefinitions)) {
@@ -118,12 +118,12 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
     ########################################################
 
     ########################################################
-    ####### OPERATION:
+    ####### OPERATION:"OPCS4CODES","OPCS3CODES"
     #######################################################
-    if( !is.na(row$OPERCODES)  ){
+    if( !is.na(row$OPCS4CODES)  ){
       #### SETTINGS:
       print(paste("   ..finding operationcodes",StrTrait))
-      VctCodes<-unlist(strsplit(row$OPERCODES,","))
+      VctCodes<-unlist(strsplit(row$OPCS4CODES,","))
 
 
       StrColumnForHescodes<-c("oper4_1","oper4_2" )
@@ -133,9 +133,33 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
       StrColumnnameForEventDate<-"opdate_1"
       ####################################
       ### HES: FOLLOW UP + HISTORY VARIABLES:
-      StrName="Ohes"
+      StrName="O4hes"
       StrColumnnameForVisitDate<-visitdt
-      StrDescription<-paste(row$DESCRIPTION,"- OPER(HES)",paste(VctCodes,collapse=","))
+      StrDescription<-paste(row$DESCRIPTION,"- OPCS4(HES)",paste(VctCodes,collapse=","))
+
+      dir.create( paste( Outputdir,"/",visitdt,"/",Strcatagory,sep=""), showWarnings =F,recursive=T)
+      StataOutputFile= paste(Outputdir,"/",visitdt,"/",Strcatagory,"/",paste(StrTrait,StrName,sep="_"),".dta",sep="")
+      Outcome_HES(dfmaster_SQL_merge,paste(StrTrait,StrName,sep="_"),StrDescription,VctCodes,epidurfilter,StrColumnForHescodes,StrColumnnameForEventDate,StrColumnnameForVisitDate,StataOutputFile)
+
+    }
+
+
+    if( !is.na(row$OPCS3CODES)  ){
+      #### SETTINGS:
+      print(paste("   ..finding operationcodes",StrTrait))
+      VctCodes<-unlist(strsplit(row$OPCS4CODES,","))
+
+
+      StrColumnForHescodes<-c("oper3_1","oper3_2" )
+      if(include_secondary==0) {
+        StrColumnForHescodes<-c("oper3_1")
+      }
+      StrColumnnameForEventDate<-"opdate_1"
+      ####################################
+      ### HES: FOLLOW UP + HISTORY VARIABLES:
+      StrName="O3hes"
+      StrColumnnameForVisitDate<-visitdt
+      StrDescription<-paste(row$DESCRIPTION,"- OPCS3(HES)",paste(VctCodes,collapse=","))
 
       dir.create( paste( Outputdir,"/",visitdt,"/",Strcatagory,sep=""), showWarnings =F,recursive=T)
       StataOutputFile= paste(Outputdir,"/",visitdt,"/",Strcatagory,"/",paste(StrTrait,StrName,sep="_"),".dta",sep="")
@@ -390,7 +414,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
     print(visitdt)
     filesEpisode<-list.files(path=paste(Outputdir,"/",visitdt,"/HESIN",sep=""),pattern=paste("^",StrTrait,"(_)(.*)dta$",sep=""), full.names=TRUE,recursive = F)
     if( length(filesEpisode)>0) {
-      HEScodes=paste(row$ICD10CODES,row$ICD9CODES,row$OPERCODES,sep="|")
+      HEScodes=paste(row$ICD10CODES,row$ICD9CODES,row$OPCS4CODES,row$OPCS3CODES,sep="|")
       OutputdirMerged=paste(Outputdir,"/",visitdt,"/HESIN/merged/",sep="")
       StataOutputFile=paste(OutputdirMerged,"/",StrTrait,"_merged.dta",sep="")
 
@@ -430,7 +454,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
     filesEpisode<-c(filesEpisode,list.files(path=paste(Outputdir,"/",visitdt,"/GP",sep=""),pattern=paste("^",StrTrait,"(_)(.*)dta$",sep=""), full.names=TRUE,recursive = F))
 
     if( length(filesEpisode)>0) {
-      EPcodes=paste(row$ICD10CODES,row$ICD9CODES,row$OPERCODES,row$READCODES,row$CTV3CODES,row$BNFCODES,row$DMDCODES,sep="|")
+      EPcodes=paste(row$ICD10CODES,row$ICD9CODES,row$OPCS4CODES,row$OPCS3CODES,row$READCODES,row$CTV3CODES,row$BNFCODES,row$DMDCODES,sep="|")
       OutputdirMerged=paste(Outputdir,"/",visitdt,"/ALL/Episodes/",sep="")
       dir.create(OutputdirMerged, showWarnings = FALSE, recursive = TRUE)
       StataOutputFile=paste(OutputdirMerged,"/",StrTrait,"_merged.dta",sep="")

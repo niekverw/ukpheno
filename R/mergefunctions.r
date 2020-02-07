@@ -105,8 +105,12 @@ MultiMergeEpisodeData <- function(filesEpisode,StrTrait,StrDescription,HEScodes,
   names(dfMerged)[names(dfMerged) %in% newcols] <- paste0(StrTrait,suffix,names(dfMerged)[names(dfMerged) %in% newcols ])
 
   ## remove indiviual HES data
-  VctRemoveCols<-!grepl( "_DO_FUd" , names( dfMerged ) ) & !grepl( "_Read_" , names( dfMerged ) ) & !grepl( "_DOp_FUd" , names( dfMerged ) )  & !grepl( "_Dhes_" , names( dfMerged ) ) & !grepl( "_D9hes_" , names( dfMerged ) ) & !grepl( "_Ohes_" , names( dfMerged ) )
-  dfMerged<-dfMerged[ , VctRemoveCols  ] ## remove individual followup data.
+  VctRemoveCols<- !grepl( "_DO_FUd" , names( dfMerged ) ) &
+    !grepl( "_Read_" , names( dfMerged ) ) & !grepl( "_CTV3_" , names( dfMerged ) ) &
+    !grepl( "_DOp_FUd" , names( dfMerged ) )  & !grepl( "_Dhes_" , names( dfMerged ) ) & !grepl( "_D9hes_" , names( dfMerged ) ) &
+    !grepl( "_O4hes_" , names( dfMerged ) ) & !grepl( "_O3hes_" , names( dfMerged ) )  & !grepl( "_BNF_" , names( dfMerged ) )  & !grepl( "_DMD_" , names( dfMerged ) )
+
+  dfMerged <- dfMerged[ , VctRemoveCols  ] ## remove individual followup data.
 
   names(dfMerged) %in% dfVctDescriptions[,1]
 

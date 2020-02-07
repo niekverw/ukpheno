@@ -36,7 +36,7 @@ CheckDuplicateTRAITS<-function(df){
 
 
 #' @export
-PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=NULL){ # c("ICD10CODES","ICD9CODES","OPERCODES")
+PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=NULL){ # c("ICD10CODES","ICD9CODES","OPCS4CODES","OPCS3CODES")
 ## df<-dfDefinitions
   # check if nrows==1
   check=0
@@ -131,7 +131,7 @@ ReduceRedundancyDf<- function(df){ ### NOT really nessesary
 
 
 # DfDefinitions<-read.table("/Users/niekverw/Downloads/ex",sep="\t",header=T)
-#columns<-c("ICD10CODES","ICD9CODES","OPERCODES","TOUCHSCREEN","TS_AGE_DIAG_COLNAME","SELFREPORTED","MEDICATION","LAB")
+#columns<-c("ICD10CODES","ICD9CODES","OPCS4CODES","OPCS3CODES","TOUCHSCREEN","TS_AGE_DIAG_COLNAME","SELFREPORTED","MEDICATION","LAB")
 # print(dfDefinitions)
 #dfDefinitionstmp2<-ProcessDfDefinitions(dfDefinitions,columns)
 
@@ -155,22 +155,22 @@ ReduceRedundancyDf<- function(df){ ### NOT really nessesary
 #' #
 #' #
 #' #
-#' VctAllColumns<-  c("TS", "SR", "TS_RX", "SR_RX", "LAB", "ICD10CODES", "ICD9CODES", "OPERCODES", "TS_AGE_DIAG_COLNAME", "READCODES","CTV3CODES","BNFCODES","DMDCODES", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
+#' VctAllColumns<-  c("TS", "SR", "TS_RX", "SR_RX", "LAB", "ICD10CODES", "ICD9CODES", "OPCS4CODES","OPCS3CODES", "TS_AGE_DIAG_COLNAME", "READCODES","CTV3CODES","BNFCODES","DMDCODES", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
 #' ProcessDfDefinitions(dfDefinitions,VctAllColumns)
 #'
 #' @export
 ProcessDfDefinitions<-function(df,
                                VctAllColumns=c("TS", "SR", "TS_RX", "SR_RX", "LAB",
-                                               "ICD10CODES", "ICD9CODES", "OPERCODES",
+                                               "ICD10CODES", "ICD9CODES", "OPCS4CODES","OPCS3CODES",
                                                "TS_AGE_DIAG_COLNAME",
                                                "READCODES", "CTV3CODES",
                                                "BNFCODES","DMDCODES",
                                                "n_20001_",    "n_20002_", "n_20003_", "n_20004_",
                                                "DEPENDENCY"),
-                               VctColstoupper=c("ICD10CODES","ICD9CODES","OPERCODES"),
+                               VctColstoupper=c("ICD10CODES","ICD9CODES","OPCS4CODES","OPCS3CODES"),
                                fill_dependencies=T){
   # df<- dfDefinitions  #  df<- dfDefinitions2
-  # VctAllColumns<-  c("TS", "SR", "TS_RX", "SR_RX", "LAB", "ICD10CODES", "ICD9CODES", "OPERCODES", "TS_AGE_DIAG_COLNAME", "READCODES","CTV3", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
+  # VctAllColumns<-  c("TS", "SR", "TS_RX", "SR_RX", "LAB", "ICD10CODES", "ICD9CODES", "OPCS4CODES","OPCS3CODES", "TS_AGE_DIAG_COLNAME", "READCODES","CTV3", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
 
   #if(nrow(df)==1 ) {stop("please have more than 1 phenotype definition.")} ## check if excel file has more than 1 row.
 
@@ -241,4 +241,25 @@ ProcessDfDefinitions<-function(df,
   return(ConvertFactorsToStringReplaceNAInDf(df))
 
   #write.table(df,paste(dfDefinitions_file,".processed.tsv",sep=""),quote = FALSE,row.names = FALSE,sep="\t")
+}
+
+#' @export
+get_allvarnames <- function(dfDefinitions_processed){
+  #  dfDefinitions_processed
+  VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","SR_RX","LAB") #set this variable to a selection of columns (dfDefinition columns) to be outputted by the _UKBV variable, default is 'VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","SR_RX","LAB")'
+  StrTSAgeColumn="TS_AGE_DIAG_COLNAME"
+
+  TScolumns = c(VctAllUKBVDefinitionColumns,StrTSAgeColumn)
+  defcols <- unlist(strsplit(na.omit(unname(unlist(dfDefinitions_processed[,c(TScolumns)]))),split=","))
+  defcols <- gsub("=.*","",defcols)
+  defcols <- unique(defcols)
+
+  SRcolumns<-c("n_20001_","n_20002_","n_20003_","n_20004_")
+  Othercolumns <- c("ts_53_","ts_40000_","n_40001_","n_40002_")
+
+  allvarnames <- unique(c(defcols,SRcolumns,Othercolumns))
+
+  allvarnames<-gsub("[a-z]*?_","",allvarnames)
+
+  return(allvarnames)
 }
