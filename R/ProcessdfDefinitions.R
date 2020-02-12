@@ -44,7 +44,7 @@ PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=NULL){ # c("IC
 
 
   ## for the names: remove everything between dots (R converts symbols to dots "(,.-)/" etc )
-  names(df)<-gsub( " *\\..*?\\. *", "", names(df) )
+  names(df) <- gsub( " *\\..*?\\. *", "", names(df) )
   ## add missing columns
   df[, VctAllColumns[!VctAllColumns %in% colnames(df)]] <- NA
   ## remove everything between brackets
@@ -175,6 +175,8 @@ ProcessDfDefinitions<-function(df,
   #if(nrow(df)==1 ) {stop("please have more than 1 phenotype definition.")} ## check if excel file has more than 1 row.
 
   df<-PreProcessDfDefinitions(df,VctAllColumns,VctColstoupper=VctColstoupper)
+  if(any(!VctAllColumns %in% names(df))) print(paste("WARNING missing columns:", paste(VctAllColumns[!VctAllColumns %in% names(df)],collapse=", ")))
+
   #################################
   CheckDuplicateTRAITS(df) # check duplicateids.
   ### df = excel matrix. 1 hij loopt een voor een over elke rij heen,
