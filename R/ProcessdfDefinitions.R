@@ -168,7 +168,8 @@ ProcessDfDefinitions<-function(df,
                                                "n_20001_",    "n_20002_", "n_20003_", "n_20004_",
                                                "DEPENDENCY"),
                                VctColstoupper=c("ICD10CODES","ICD9CODES","OPCS4CODES","OPCS3CODES"),
-                               fill_dependencies=T){
+                               fill_dependencies=T,
+                               convert_read_to_UKBmeds=F){
   # df<- dfDefinitions  #  df<- dfDefinitions2
   # VctAllColumns<-  c("TS", "SR", "TS_RX", "SR_RX", "LAB", "ICD10CODES", "ICD9CODES", "OPCS4CODES","OPCS3CODES", "TS_AGE_DIAG_COLNAME", "READCODES","CTV3", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
 
@@ -190,9 +191,10 @@ ProcessDfDefinitions<-function(df,
   # df$n_20003_<- paste(df$n_20003_, unlist(lapply( df$n_20003_, CovertMednamesToUkbcoding)))
   # df<-FillInSRdefinitions(df,"SR_RX",c("n_20003_"))
   ### LOOKUP READ.CODES and put UKBIO.CODES in SR_RX
-  df$n_20003_ <- paste(df$n_20003_, unlist(lapply( df$READCODES, CovertReadcodesToSelfReportedUkbCoding)),sep=",")
-  df$n_20003_ <- unlist(lapply(df$n_20003_,function(x) {  x = unique(strsplit(x,"," )[[1]]); if(length(x)==1 & x[1] =="NA"){ return("NA")} else{ return( paste(x[x != "NA"],collapse=",") )} }))
-
+  if (convert_read_to_UKBmeds==T){
+    df$n_20003_ <- paste(df$n_20003_, unlist(lapply( df$READCODES, CovertReadcodesToSelfReportedUkbCoding)),sep=",")
+    df$n_20003_ <- unlist(lapply(df$n_20003_,function(x) {  x = unique(strsplit(x,"," )[[1]]); if(length(x)==1 & x[1] =="NA"){ return("NA")} else{ return( paste(x[x != "NA"],collapse=",") )} }))
+  }
 
   #################################
   ### FILL SR fields with  _2000X_ 'helper' columns;

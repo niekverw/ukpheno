@@ -9,7 +9,7 @@ ProcessDfDefinitions(df, VctAllColumns = c("TS", "SR", "TS_RX", "SR_RX",
   "TS_AGE_DIAG_COLNAME", "READCODES", "CTV3CODES", "BNFCODES", "DMDCODES",
   "n_20001_", "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY"),
   VctColstoupper = c("ICD10CODES", "ICD9CODES", "OPCS4CODES",
-  "OPCS3CODES"), fill_dependencies = T)
+  "OPCS3CODES"), fill_dependencies = T, convert_read_to_UKBmeds = F)
 }
 \arguments{
 \item{VctAllColumns}{Vct}
