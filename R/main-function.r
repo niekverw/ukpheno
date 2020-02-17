@@ -147,7 +147,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
     if( !is.na(row$OPCS3CODES)  ){
       #### SETTINGS:
       print(paste("   ..finding operationcodes",StrTrait))
-      VctCodes<-unlist(strsplit(row$OPCS4CODES,","))
+      VctCodes<-unlist(strsplit(row$OPCS3CODES,","))
 
 
       StrColumnForHescodes<-c("oper3_1","oper3_2" )
