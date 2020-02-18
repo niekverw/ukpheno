@@ -97,6 +97,11 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
   # running a test on cholesterol Touchscreen, shouldnt be characters..
   #if(nchar(as.character(unique(dfmaster_TSDEATHMEDICD10_visitdtonly[,"n_6153_0_0"]))[2])>2){print("ERROR: be aware that column entries are text, convert to numbers, defactor.."); return(0)}
 
+
+  # write n_eids available from gp and hesin data
+  fwrite(data.frame(n_eid=unique(c(dfgpclinical$n_eid,dfgpscripts$n_eid))),paste0(Outputdir,"/n_eids.GP.txt"))
+  fwrite(data.frame(n_eid=unique(c(dfmaster_SQL_merge$n_eid))),paste0(Outputdir,"/n_eids.HESIN.txt"))
+
   print("checking definitions; for(i in 1:nrow(dfDefinitions))")
   for(i in 1:nrow(dfDefinitions)) {
     row <- dfDefinitions[i,]
@@ -416,7 +421,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
     if( length(filesEpisode)>0) {
       HEScodes=paste(row$ICD10CODES,row$ICD9CODES,row$OPCS4CODES,row$OPCS3CODES,sep="|")
       OutputdirMerged=paste(Outputdir,"/",visitdt,"/HESIN/merged/",sep="")
-      StataOutputFile=paste(OutputdirMerged,"/",StrTrait,"_merged.dta",sep="")
+      StataOutputFile=paste(OutputdirMerged,"/",StrTrait,"_HESIN.dta",sep="")
 
       if( file.exists(StataOutputFile )) {### CHECK IF FILE EXISTS:
         print(paste(StataOutputFile," ... already exists!, skipping"))
@@ -436,7 +441,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
     if( length(filesEpisode)>0) {
       HEScodes=paste(row$READCODES,row$CTV3CODES,row$BNFCODES,row$BNFCODES,row$DMDCODES,sep="|")
       OutputdirMerged=paste(Outputdir,"/",visitdt,"/GP/merged/",sep="")
-      StataOutputFile=paste(OutputdirMerged,"/",StrTrait,"_merged.dta",sep="")
+      StataOutputFile=paste(OutputdirMerged,"/",StrTrait,"_GP.dta",sep="")
 
       if( file.exists(StataOutputFile )) {### CHECK IF FILE EXISTS:
         print(paste(StataOutputFile," ... already exists!, skipping"))
