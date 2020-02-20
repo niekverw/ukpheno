@@ -1,7 +1,9 @@
 
 
 #' @export
-Outcome_HES<-function(dfmaster_SQL_merge,StrTrait,StrDescription,VctCodes,epidurfilter=0,StrColumnForHescodes,StrColumnnameForEventDate,StrColumnnameForVisitDate,StataOutputFile){
+Outcome_HES<-function(dfmaster_SQL_merge,StrTrait,StrDescription,VctCodes,epidurfilter=0,StrColumnForHescodes,StrColumnnameForEventDate,StrColumnnameForVisitDate,StataOutputFile,
+                      recurrence_is_possible=TRUE # not for self reported data..
+                      ){
   # epidurfilter=0
   # dfmaster_SQL_merge=dfgpclinical
   # dfmaster_SQL_merge=dfhesintables
@@ -54,7 +56,7 @@ Outcome_HES<-function(dfmaster_SQL_merge,StrTrait,StrDescription,VctCodes,epidur
   dfmaster_SQL_merge_oper     <-suppressWarnings(  dfmaster_SQL_merge_oper %>%  group_by(n_eid) %>%  mutate(HXt = -max(abs(HXt), na.rm=T) ) ) ### replace HXd
   dfmaster_SQL_merge_oper$HXt[is.infinite(dfmaster_SQL_merge_oper$HXt)]<-NA
 
-  # ## total episode dur (tt): ### NOT FOR GP DATA
+  # ## total episode dur (tt): ### NOT FOR GP/SR DATA
   dfmaster_SQL_merge_oper$episodedur <- abs(round(difftime( dfmaster_SQL_merge_oper$event_date , dfmaster_SQL_merge_oper$epiend_1 ,units="days")))
   dfmaster_SQL_merge_oper     <-dfmaster_SQL_merge_oper %>% group_by(n_eid) %>% mutate(HXto = sum(ifelse (visit_date >= event_date, episodedur ,0 ) ))
   #
@@ -75,6 +77,12 @@ Outcome_HES<-function(dfmaster_SQL_merge,StrTrait,StrDescription,VctCodes,epidur
 
   ## keep uniq
   dfmaster_SQL_merge_oper <- dfmaster_SQL_merge_oper[!duplicated(dfmaster_SQL_merge_oper[,DiagnosisVars]),][,DiagnosisVars] ## FILTER UNIQ + KEEP ONLY COLUMNS NEEDED.
+
+  # if(recurrence_is_possible==FALSE){
+  #   #TODO
+  # remove FU* if HXn>0
+  # }
+
 
   print(paste("   #found ",nrow(dfmaster_SQL_merge_oper) ))
 
