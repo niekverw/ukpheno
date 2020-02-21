@@ -39,9 +39,10 @@ CheckDuplicateTRAITS<-function(df){
 PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=NULL){ # c("ICD10CODES","ICD9CODES","OPCS4CODES","OPCS3CODES")
 ## df<-dfDefinitions
   # check if nrows==1
-  check=0
-  if(nrow(df)==1){df<-rbind(df,df);check=1}
-
+  checkr=0
+  checkc=0
+  if(nrow(df)==1){df<-rbind(df,df);checkr=1}
+  if(ncol(df)==1 & length(VctAllColumns)==1){df<-cbind(df,df);checkc=1; names(df)<-c(VctAllColumns,"tmp"); VctAllColumns=c(VctAllColumns,"tmp") }
 
   ## for the names: remove everything between dots (R converts symbols to dots "(,.-)/" etc )
   names(df) <- gsub( " *\\..*?\\. *", "", names(df) )
@@ -68,7 +69,8 @@ PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=NULL){ # c("IC
 
   df<-ConvertFactorsToStringReplaceNAInDf(df) #### CONVERT FACTOR TO STRING
 
-  if(check==1){df<-df[1,]}
+  if(checkr==1){df<-df[1,]}
+  if(checkc==1){df<-df[,1]}
 
   return(df)
 }
@@ -168,8 +170,7 @@ ProcessDfDefinitions<-function(df,
                                                "n_20001_",    "n_20002_", "n_20003_", "n_20004_",
                                                "DEPENDENCY"),
                                VctColstoupper=c("ICD10CODES","ICD9CODES","OPCS4CODES","OPCS3CODES"),
-                               fill_dependencies=T,
-                               convert_read_to_UKBmeds=F){
+                               fill_dependencies=T){
   # df<- dfDefinitions  #  df<- dfDefinitions2
   # VctAllColumns<-  c("TS", "SR", "TS_RX", "SR_RX", "LAB", "ICD10CODES", "ICD9CODES", "OPCS4CODES","OPCS3CODES", "TS_AGE_DIAG_COLNAME", "READCODES","CTV3", "n_20001_",    "n_20002_", "n_20003_", "n_20004_", "DEPENDENCY")
 
@@ -191,10 +192,6 @@ ProcessDfDefinitions<-function(df,
   # df$n_20003_<- paste(df$n_20003_, unlist(lapply( df$n_20003_, CovertMednamesToUkbcoding)))
   # df<-FillInSRdefinitions(df,"SR_RX",c("n_20003_"))
   ### LOOKUP READ.CODES and put UKBIO.CODES in SR_RX
-  if (convert_read_to_UKBmeds==T){
-    df$n_20003_ <- paste(df$n_20003_, unlist(lapply( df$READCODES, CovertReadcodesToSelfReportedUkbCoding)),sep=",")
-    df$n_20003_ <- unlist(lapply(df$n_20003_,function(x) {  x = unique(strsplit(x,"," )[[1]]); if(length(x)==1 & x[1] =="NA"){ return("NA")} else{ return( paste(x[x != "NA"],collapse=",") )} }))
-  }
 
   #################################
   ### FILL SR fields with  _2000X_ 'helper' columns;
@@ -267,3 +264,18 @@ get_allvarnames <- function(dfDefinitions_processed){
 
   return(allvarnames)
 }
+
+
+#' @export
+convert_readv2_to_ukbmedication<-function(Vctn_20003_,Vctreadcodes){
+  # Vctn_20003_ <- dfDefinitions$n_20003_
+  # Vctreadcodes <- dfDefinitions$READCODES
+
+  Vctreadcodes=PreProcessDfDefinitions(data.frame(Vctreadcodes=Vctreadcodes),VctAllColumns="Vctreadcodes",VctColstoupper=F)
+  Vctn_20003_=PreProcessDfDefinitions(data.frame(Vctn_20003_=Vctn_20003_),VctAllColumns="Vctn_20003_",VctColstoupper=F)
+
+  Vctn_20003_ <- paste(Vctn_20003_, unlist(lapply( Vctreadcodes, CovertReadcodesToSelfReportedUkbCoding)),sep=",")
+  Vctn_20003_ <- unlist(lapply(Vctn_20003_,function(x) {  x = unique(strsplit(x,"," )[[1]]); if(length(x)==1 & x[1] =="NA"){ return("NA")} else{ return( paste(x[x != "NA"],collapse=",") )} }))
+  return(Vctn_20003_)
+}
+
