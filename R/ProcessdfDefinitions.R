@@ -36,7 +36,7 @@ CheckDuplicateTRAITS<-function(df){
 
 
 #' @export
-PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=NULL){ # c("ICD10CODES","ICD9CODES","OPCS4CODES","OPCS3CODES")
+PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=NULL ){ # c("ICD10CODES","ICD9CODES","OPCS4CODES","OPCS3CODES")
 ## df<-dfDefinitions
   # check if nrows==1
   checkr=0
@@ -50,9 +50,9 @@ PreProcessDfDefinitions<-function(df,VctAllColumns,VctColstoupper=NULL){ # c("IC
   df[, VctAllColumns[!VctAllColumns %in% colnames(df)]] <- NA
   ## remove everything between brackets
   df[,VctAllColumns]<- data.frame(apply(df[,VctAllColumns], 2, function(y) gsub( " *\\(.*?\\) *", "", y)) )
-
   ### remove dots(.): names(df)
-  df[,VctAllColumns]<- data.frame(apply(df[,VctAllColumns],2,function(x) gsub(".", "", x, fixed = TRUE)))
+  VctColumnsRemoveDots=c("ICD10CODES","ICD9CODES","OPCS4CODES","OPCS3CODES")
+  df[,VctColumnsRemoveDots]<- data.frame(apply(df[,VctColumnsRemoveDots],2,function(x) gsub(".", "", x, fixed = TRUE)))
   ### remove spaces:
   df[,VctAllColumns]<- data.frame(apply(df[,VctAllColumns],2,function(x) gsub(" ", "", x, fixed = TRUE)))
   ### remove trailing commas:

@@ -2,7 +2,7 @@
 
 #' @export
 Outcome_HES<-function(dfmaster_SQL_merge,StrTrait,StrDescription,VctCodes,epidurfilter=0,StrColumnForHescodes,StrColumnnameForEventDate,StrColumnnameForVisitDate,StataOutputFile,
-                      recurrence_is_possible=TRUE # not for self reported data..
+                      grep_with_wildcard=TRUE #recurrence_is_possible=TRUE # not for self reported data..
                       ){
   # epidurfilter=0
   # dfmaster_SQL_merge=dfgpclinical
@@ -28,7 +28,12 @@ Outcome_HES<-function(dfmaster_SQL_merge,StrTrait,StrDescription,VctCodes,epidur
   #  grepoper<-c(grepoper,grep(paste(VctCodes, collapse='|'), dfmaster_SQL_merge_tmp[,i], ignore.case=FALSE))
   #}
   if (length(StrColumnForHescodes)==1){StrColumnForHescodes = c(StrColumnForHescodes,StrColumnForHescodes)}
+
+  if(grep_with_wildcard==TRUE){
   grepoper <-unlist( mclapply(  dfmaster_SQL_merge_tmp[, c(StrColumnForHescodes,StrColumnForHescodes)], function(col) grep(paste(sep="","^",VctCodes, collapse='|'), col, ignore.case=FALSE),mc.cores =detectCores()/2 ) ) ## PARALLEL of the above.
+  } else {
+    grepoper <-unlist( mclapply(  dfmaster_SQL_merge_tmp[, c(StrColumnForHescodes,StrColumnForHescodes)], function(col) grep(paste(sep="","^",VctCodes,"$", collapse='|'), col, ignore.case=FALSE),mc.cores =detectCores()/2 ) ) ## PARALLEL of the above.
+  }
 
   if(length(grepoper) ==0) {print("    nothing here");return(0) }
 
