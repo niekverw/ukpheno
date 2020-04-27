@@ -136,6 +136,13 @@ MultiMergeEpisodeData <- function(filesEpisode,StrTrait,StrDescription,HEScodes,
 
 #' @export
 MultiMergeHESIN_UKBV <- function(files,StrTrait,StrDescription,HEScodes,StataOutputFile){
+  # print("--- Start MultiMergeHESIN_UKBV --- ")
+  # print(paste("files:",paste(collapse=",",files)))
+  # print(paste("StrTrait:",StrTrait))
+  # print(paste("StrDescription:",StrDescription))
+  # print(paste("HEScodes (not used):",HEScodes))
+  # print(paste("StataOutputFile:",StataOutputFile))
+
   #  StataOutputFile="/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/CAD2_testNewFU.dta"
   #  files<-c("/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/HESIN/merged/CAD2_merged.dta","/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/UKBVisit/ALL/CAD2_UKBV.dta"  ,"/data_work/databases/ukbiobanks/Phenotypes/CAD_definitions_testNewscript/output/ts_53_0_0/UKBVisit/CAD2_TSAd.dta"   )
   #  StrTrait<-"CAD2"
@@ -301,17 +308,12 @@ MultiMergeHESIN_UKBV <- function(files,StrTrait,StrDescription,HEScodes,StataOut
   newcols <- c("HXd","FUd","FUn","FU","ANY","HX","HXn")
   names(dfMerged)[names(dfMerged) %in% newcols ] <- paste(StrTrait,"_", names(dfMerged)[names(dfMerged) %in% newcols] , sep="")
 
-  dfVctDescriptions
-  dfVctDescriptions[ dfVctDescriptions[,1] %in% names(dfMerged) ,]
+  # dfVctDescriptions
+  # dfVctDescriptions[ dfVctDescriptions[,1] %in% names(dfMerged) ,]
+
 
   attr(dfMerged, "var.labels") <- c("identifier",rep(paste(StrDescription," - Combined"),ncol(dfMerged)-1))
-
-  #
-  # attr(dfMerged, "var.labels") <-
-  #   c(VctDescriptions,
-  #     paste(StrDescription," - ",names(dfMerged)[  (length(names(dfMerged))-4):(length(names(dfMerged)) )]," - Combined",sep="")
-  #   )
-  # attr(dfMerged, "var.labels")<-substr(attr(dfMerged, "var.labels"),0,80)
+  attr(dfMerged, "var.labels")<-substr(attr(dfMerged, "var.labels"),0,80)
 
   print(names(dfMerged))
   save.dta13(dfMerged, StataOutputFile,compress = TRUE)
