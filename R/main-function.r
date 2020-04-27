@@ -278,7 +278,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
         #### SETTINGS:
               print(paste("   ..finding",StrDefinitionColumn))
               VctTSconditions<-unlist(strsplit(row[,StrDefinitionColumn],","))
-              StrDescription<-paste(row$DESCRIPTION,"-",StrDefinitionColumn,"-",paste(VctTSconditions,collapse =",")  )
+              StrDescription<-paste(row$DESCRIPTION,"-",StrDefinitionColumn)
               dir.create( paste( Outputdir,"/",visitdt,"/",Strcatagory,sep=""), showWarnings =F,recursive=T)
               StataOutputFile= paste(Outputdir,"/",visitdt,"/",Strcatagory,"/",paste(StrTrait,StrDefinitionColumn,sep="_"),".dta",sep="")
               Query_Masterset2(dfmaster_TSDEATHMEDICD10_visitdtonly,StrTrait,StrDescription,StrDefinitionColumn,VctTSconditions,StataOutputFile,visitreference,Nvisits)
