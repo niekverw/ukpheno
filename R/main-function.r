@@ -102,6 +102,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
   dir.create( Outputdir, showWarnings =F,recursive=T)
   fwrite(data.frame(n_eid=unique(c(dfgpclinical$n_eid,dfgpscripts$n_eid))),paste0(Outputdir,"/n_eids.GP.txt"))
   fwrite(data.frame(n_eid=unique(c(dfmaster_SQL_merge$n_eid))),paste0(Outputdir,"/n_eids.HESIN.txt"))
+  fwrite(data.frame(n_eid=unique(c(dfmaster_TSDEATHMEDICD10_visitdtonly$n_eid))),paste0(Outputdir,"/n_eids.ALL.txt"))
 
   print("checking definitions; for(i in 1:nrow(dfDefinitions))")
   for(i in 1:nrow(dfDefinitions)) {
