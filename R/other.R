@@ -21,13 +21,13 @@ merge_stata_files <- function(statafiles=list.files(dir.ukbpheno_all,full.names 
     df.all_attr <- unique(rbind(d_attr,df.all_attr))
     df.all = merge(df.all,d,by="n_eid",all=TRUE)
 
-    
+    gc()
   }
   Vctattrs <- df.all_attr[match(names(df.all), df.all_attr$colname),"attr"]
   attr(df.all,"var.labels") <- as.character(Vctattrs)
   print(paste("writing:",f.out))
   #write_dta(df.all, f.out, version = 14)
-  save.dta13(df.all, f.out,compress = TRUE)
+  save.dta13(df.all, f.out,compress = FALSE)
   return(df.all)
 }
 

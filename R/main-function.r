@@ -60,7 +60,7 @@
 ###########################################################
 CreateUKBiobankPhentoypes<-function(Nvisits,
                                     visitreference,
-                                    UKbioDataset,
+                                    dfmaster_TSDEATHMEDICD10_visitdtonly=UKbioDataset,
                                     dfmaster_SQL_merge,
                                     dfgpclinical,dfgpscripts,
                                     dfDefinitions,Outputdir,VctOutputIndividualColumns=c() ){
@@ -92,7 +92,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
   ### TODO: check how many hits per ICD10code --> logfile.
   ### TODO: evaluate what happens if uncommented and refvisit=2 where some ts_53 are missing.
   #dfmaster_TSDEATHMEDICD10_visitdtonly<-UKbioDataset[!is.na(UKbioDataset[visitdt]),]
-  dfmaster_TSDEATHMEDICD10_visitdtonly<-UKbioDataset
+  #dfmaster_TSDEATHMEDICD10_visitdtonly<-dfmaster_TSDEATHMEDICD10_visitdtonly
 
   # running a test on cholesterol Touchscreen, shouldnt be characters..
   #if(nchar(as.character(unique(dfmaster_TSDEATHMEDICD10_visitdtonly[,"n_6153_0_0"]))[2])>2){print("ERROR: be aware that column entries are text, convert to numbers, defactor.."); return(0)}
@@ -499,6 +499,7 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
 
   }
 
+  gc()
   ## summarize sources (death, hesin, gp (read), self reports from nurse (SR), touchscreen (TS) )
   df_phenotype_crosstabulation <- summarize_cross_phenotype_fields(paste0(Outputdir,"/",visitdt),UKbioDataset$n_eid) #dfmaster_TSDEATHMEDICD10_visitdtonly
   fwrite(df_phenotype_crosstabulation,f=paste0(Outputdir,"/",visitdt,"/crosstabulation.tsv"),row.names = F,sep = "\t")
