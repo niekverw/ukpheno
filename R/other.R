@@ -15,8 +15,8 @@ merge_stata_files <- function(statafiles=list.files(dir.ukbpheno_all,full.names 
     d_attr <- as.data.frame(cbind(names(d),attr(d,"var.labels")))
     names(d_attr) <- c("colname","attr")
 
-    d_attr[names(d) %in% columns_to_keep,]
-    d[,names(d) %in% columns_to_keep]
+    d_attr <- d_attr[names(d) %in% columns_to_keep,]
+    d <- d[,names(d) %in% columns_to_keep]
     
     df.all_attr <- unique(rbind(d_attr,df.all_attr))
     df.all = merge(df.all,d,by="n_eid",all=TRUE)

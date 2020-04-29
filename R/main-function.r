@@ -63,7 +63,8 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
                                     dfmaster_TSDEATHMEDICD10_visitdtonly=UKbioDataset,
                                     dfmaster_SQL_merge,
                                     dfgpclinical,dfgpscripts,
-                                    dfDefinitions,Outputdir,VctOutputIndividualColumns=c() ){
+                                    dfDefinitions,Outputdir,VctOutputIndividualColumns=c(),
+                                    merge_all_output=TRUE ){
 
   #### DEFINE COLUMNS
   VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","SR_RX","LAB") #set this variable to a selection of columns (dfDefinition columns) to be outputted by the _UKBV variable, default is 'VctAllUKBVDefinitionColumns=c("TS","SR","TS_RX","SR_RX","LAB")'
@@ -505,8 +506,9 @@ CreateUKBiobankPhentoypes<-function(Nvisits,
   fwrite(df_phenotype_crosstabulation,f=paste0(Outputdir,"/",visitdt,"/crosstabulation.tsv"),row.names = F,sep = "\t")
 
   # merge traits
-  merge_stata_files(statafiles = list.files(paste0(Outputdir,"/",visitdt,"/ALL/"),full.names = T,pattern = "*.dta$" ),paste0(Outputdir,"/",visitdt,"/ALL.dta"))
-
+  if (merge_all_output){
+    merge_stata_files(statafiles = list.files(paste0(Outputdir,"/",visitdt,"/ALL/"),full.names = T,pattern = "*.dta$" ),paste0(Outputdir,"/",visitdt,"/ALL.dta"))
+  }
 
 
 }
